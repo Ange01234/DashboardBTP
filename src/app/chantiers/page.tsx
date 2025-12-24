@@ -14,9 +14,11 @@ import {
 import { MOCK_CHANTIERS } from '@/lib/mockData';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ChantierStatus } from '@/types';
 
 export default function ChantiersPage() {
+    const router = useRouter();
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<ChantierStatus | 'Tous'>('Tous');
 
@@ -71,10 +73,10 @@ export default function ChantiersPage() {
             {/* Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredChantiers.map((chantier) => (
-                    <Link
+                    <div
                         key={chantier.id}
-                        href={`/chantiers/${chantier.id}`}
-                        className="group block glass p-6 rounded-2xl card-hover border border-slate-100"
+                        onClick={() => router.push(`/chantiers/${chantier.id}`)}
+                        className="group block glass p-6 rounded-2xl cursor-pointer card-hover border border-slate-100"
                     >
                         <div className="flex items-start justify-between mb-6">
                             <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-primary-50 transition-colors">
@@ -116,13 +118,13 @@ export default function ChantiersPage() {
                             </div>
                             <Link
                                 href={`/chantiers/${chantier.id}/modifier`}
-                                className="p-2 hover:bg-slate-50 rounded-lg text-slate-400"
+                                className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 relative z-10"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <MoreVertical size={20} />
                             </Link>
                         </div>
-                    </Link>
+                    </div>
                 ))}
             </div>
 

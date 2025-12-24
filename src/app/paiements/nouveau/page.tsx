@@ -28,7 +28,7 @@ export default function NewPaymentPage() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto space-y-8">
+        <div className="space-y-8">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -59,7 +59,7 @@ export default function NewPaymentPage() {
                     <div className="space-y-6">
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700">Chantier</label>
-                            <div className="relative">
+                            <div className="relative mt-2">
                                 <select
                                     required
                                     className="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 transition-all bg-white"
@@ -78,7 +78,7 @@ export default function NewPaymentPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-slate-700">Montant (TTC)</label>
-                                <div className="relative">
+                                <div className="relative mt-2">
                                     <input
                                         type="number"
                                         step="0.01"
@@ -94,7 +94,7 @@ export default function NewPaymentPage() {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-slate-700">Date de paiement</label>
-                                <div className="relative">
+                                <div className="relative mt-2">
                                     <input
                                         type="date"
                                         required
@@ -109,8 +109,8 @@ export default function NewPaymentPage() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700">Mode de règlement</label>
-                            <div className="flex flex-wrap gap-3">
-                                {['Virement', 'Chèque', 'Espèces', 'CB'].map((m) => (
+                            <div className="flex flex-wrap gap-3 mt-2">
+                                {['Virement', 'Chèque', 'Espèces'].map((m) => (
                                     <button
                                         key={m}
                                         type="button"

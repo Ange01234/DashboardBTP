@@ -75,7 +75,7 @@ export default function NewDevisPage() {
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700">Sélectionner le chantier</label>
                             <select
-                                className="w-full p-3 rounded-xl border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 transition-all bg-white"
+                                className="w-full p-3 rounded-xl border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 transition-all bg-white mt-2"
                                 value={chantierId}
                                 onChange={(e) => setChantierId(e.target.value)}
                             >
@@ -111,7 +111,7 @@ export default function NewDevisPage() {
                                     <input
                                         type="text"
                                         placeholder="ex: Pose de carrelage"
-                                        className="w-full p-2.5 rounded-lg border-slate-200 outline-none focus:ring-2 focus:ring-primary-600"
+                                        className="w-full p-2.5 rounded-lg border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 mt-2"
                                         value={item.designation}
                                         onChange={(e) => updateLine(index, 'designation', e.target.value)}
                                     />
@@ -121,7 +121,7 @@ export default function NewDevisPage() {
                                     <input
                                         type="number"
                                         min="1"
-                                        className="w-full p-2.5 rounded-lg border-slate-200 outline-none focus:ring-2 focus:ring-primary-600"
+                                        className="w-full p-2.5 rounded-lg border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 mt-2"
                                         value={item.quantity}
                                         onChange={(e) => updateLine(index, 'quantity', parseFloat(e.target.value) || 0)}
                                     />
@@ -132,7 +132,7 @@ export default function NewDevisPage() {
                                         <input
                                             type="number"
                                             step="0.01"
-                                            className="w-full pl-8 pr-3 py-2.5 rounded-lg border-slate-200 outline-none focus:ring-2 focus:ring-primary-600"
+                                            className="w-full pl-8 pr-3 py-2.5 rounded-lg border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 mt-2"
                                             value={item.unitPrice}
                                             onChange={(e) => updateLine(index, 'unitPrice', parseFloat(e.target.value) || 0)}
                                         />

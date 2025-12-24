@@ -32,7 +32,7 @@ export default function NewExpensePage() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto space-y-8 pb-20">
+        <div className="space-y-8 pb-20">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -81,7 +81,7 @@ export default function NewExpensePage() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700">Type de dépense</label>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
                                 {['matériaux', 'main-d’œuvre', 'transport', 'autre'].map((t) => (
                                     <button
                                         key={t}
@@ -147,13 +147,13 @@ export default function NewExpensePage() {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
+                        {/* <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700">Justificatif (Optionnel)</label>
                             <div className="border-2 border-dashed border-slate-200 rounded-2xl p-8 transition-all hover:bg-slate-50 hover:border-primary-300 group cursor-pointer text-center">
                                 <Camera className="mx-auto text-slate-300 group-hover:text-primary-400 mb-2" size={32} />
                                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Cliquez pour ajouter une photo ou un PDF</p>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </section>
             </form>
