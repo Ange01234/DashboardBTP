@@ -20,7 +20,8 @@ export default function NewExpensePage() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         chantierId: '',
-        type: 'matériaux',
+        type: 'matériaux' as any,
+        description: '',
         amount: '',
         provider: '',
         date: new Date().toISOString().split('T')[0],
@@ -101,6 +102,23 @@ export default function NewExpensePage() {
                         </div>
 
                         <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">Désignation</label>
+                            <input
+                                type="text"
+                                required
+                                placeholder={
+                                    formData.type === 'matériaux' ? "ex: Gravier 1 tonne, Ciment 50 sacs..." :
+                                        formData.type === 'main-d’œuvre' ? "ex: Plombier, Électricien, Maçon..." :
+                                            formData.type === 'transport' ? "ex: Livraison sable, Camion benne..." :
+                                                "ex: Description de la dépense..."
+                                }
+                                className="w-full px-4 py-3 rounded-xl border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 transition-all bg-white"
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700">Fournisseur / Prestataire</label>
                             <div className="relative">
                                 <input
@@ -123,13 +141,13 @@ export default function NewExpensePage() {
                                         type="number"
                                         step="0.01"
                                         required
-                                        placeholder="0.00"
+                                        placeholder="0"
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 transition-all bg-white"
                                         value={formData.amount}
                                         onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                                     />
                                     <Wallet className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">CFA</span>
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -146,14 +164,6 @@ export default function NewExpensePage() {
                                 </div>
                             </div>
                         </div>
-
-                        {/* <div className="space-y-2">
-                            <label className="text-sm font-semibold text-slate-700">Justificatif (Optionnel)</label>
-                            <div className="border-2 border-dashed border-slate-200 rounded-2xl p-8 transition-all hover:bg-slate-50 hover:border-primary-300 group cursor-pointer text-center">
-                                <Camera className="mx-auto text-slate-300 group-hover:text-primary-400 mb-2" size={32} />
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Cliquez pour ajouter une photo ou un PDF</p>
-                            </div>
-                        </div> */}
                     </div>
                 </section>
             </form>

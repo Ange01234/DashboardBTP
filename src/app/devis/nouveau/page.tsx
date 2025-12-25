@@ -39,7 +39,7 @@ export default function NewDevisPage() {
     };
 
     const totalHT = lineItems.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
-    const tva = totalHT * 0.20;
+    const tva = totalHT * 0.18;
     const totalTTC = totalHT + tva;
 
     return (
@@ -136,7 +136,7 @@ export default function NewDevisPage() {
                                             value={item.unitPrice}
                                             onChange={(e) => updateLine(index, 'unitPrice', parseFloat(e.target.value) || 0)}
                                         />
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">€</span>
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">CFA</span>
                                     </div>
                                 </div>
                                 <div className="w-full md:w-32 space-y-2">
@@ -176,7 +176,7 @@ export default function NewDevisPage() {
                             <span>{formatCurrency(totalHT)}</span>
                         </div>
                         <div className="flex justify-between text-slate-500 font-medium pb-4 border-b border-slate-100">
-                            <span>TVA (20%)</span>
+                            <span>TVA (18%)</span>
                             <span>{formatCurrency(tva)}</span>
                         </div>
                         <div className="flex justify-between items-end pt-2">

@@ -1,7 +1,7 @@
 export type ChantierStatus = "En cours" | "Terminé" | "Suspendu";
 export type DevisStatus = "Brouillon" | "Envoyé" | "Accepté" | "Refusé";
 export type ExpenseType = "matériaux" | "main-d’œuvre" | "transport" | "autre";
-export type PaymentMethod = "Virement" | "Chèque" | "Espèces" ;
+export type PaymentMethod = "Virement" | "Chèque" | "Espèces" | "Mobile Money";
 
 export interface LineItem {
   id: string;
@@ -31,6 +31,7 @@ export interface Expense {
   id: string;
   chantierId: string;
   type: ExpenseType;
+  description: string;
   amount: number;
   provider: string;
   date: string;

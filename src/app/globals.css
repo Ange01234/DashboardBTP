@@ -26,6 +26,10 @@
     @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl;
   }
 
+  .glass-strong {
+    @apply bg-white/90 backdrop-blur-lg border-b border-white/20 shadow-lg;
+  }
+
   .card-hover {
     @apply transition-all duration-300 hover:shadow-2xl hover:-translate-y-1;
   }

@@ -89,7 +89,7 @@ export default function NewPaymentPage() {
                                         onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                                     />
                                     <Wallet className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">€</span>
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">CFA</span>
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -110,7 +110,7 @@ export default function NewPaymentPage() {
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700">Mode de règlement</label>
                             <div className="flex flex-wrap gap-3 mt-2">
-                                {['Virement', 'Chèque', 'Espèces'].map((m) => (
+                                {['Virement', 'Chèque', 'Espèces', 'Mobile Money'].map((m) => (
                                     <button
                                         key={m}
                                         type="button"

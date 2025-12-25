@@ -57,13 +57,16 @@ export default function DepensesPage() {
                                 <tr key={expense.id} className="hover:bg-slate-50/50 transition-colors group">
                                     <td className="px-6 py-4">
                                         <span className={cn(
-                                            "inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold uppercase tracking-tighter",
+                                            "inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold uppercase tracking-tighter shadow-sm mb-1",
                                             expense.type === 'matériaux' ? "bg-amber-50 text-amber-700" :
                                                 expense.type === 'main-d’œuvre' ? "bg-purple-50 text-purple-700" :
                                                     "bg-blue-50 text-blue-700"
                                         )}>
                                             {expense.type}
                                         </span>
+                                        <div className="text-sm font-semibold text-slate-900 group-hover:text-primary-600 transition-colors">
+                                            {expense.description}
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <Link href={`/chantiers/${chantier?.id}`} className="text-slate-900 font-semibold hover:text-primary-600 flex items-center space-x-1">
@@ -82,7 +85,7 @@ export default function DepensesPage() {
                                     <td className="px-6 py-4 font-bold text-rose-600">
                                         {formatCurrency(expense.amount)}
                                     </td>
-                                    
+
                                 </tr>
                             );
                         })}

@@ -63,7 +63,7 @@ export default function ChantierDetailPage() {
             </div>
 
             {/* Hero Section */}
-            <div className="glass p-8 rounded-3xl relative overflow-hidden">
+            <div className="glass p-5 rounded-3xl relative overflow-hidden">
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="space-y-2">
                         <span className={cn(
@@ -74,7 +74,7 @@ export default function ChantierDetailPage() {
                         )}>
                             {chantier.status}
                         </span>
-                        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">{chantier.name}</h1>
+                        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">{chantier.name}</h1>
                         <div className="flex flex-wrap gap-4 text-slate-500 mt-2">
                             <div className="flex items-center space-x-1">
                                 <User size={16} />
@@ -91,9 +91,9 @@ export default function ChantierDetailPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white/50 backdrop-blur-md p-6 rounded-2xl border border-white/50 shadow-sm text-right">
+                    <div className="text-right">
                         <div className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-1">Budget Prévu</div>
-                        <div className="text-3xl font-black text-slate-900">{formatCurrency(chantier.budget)}</div>
+                        <div className="text-xl font-black text-slate-900">{formatCurrency(chantier.budget)}</div>
                     </div>
                 </div>
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary-600/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl opacity-50" />
@@ -101,40 +101,40 @@ export default function ChantierDetailPage() {
 
             {/* Financial Overview Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="glass p-6 rounded-2xl border-l-4 border-l-blue-500">
+                <div className="glass p-3 rounded-2xl">
                     <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-bold text-slate-400 uppercase">Total Devis</p>
                         <FileText size={20} className="text-blue-500" />
                     </div>
-                    <p className="text-2xl font-black text-slate-900">{formatCurrency(totalDevisTTC)}</p>
+                    <p className="text-xl font-black text-slate-900">{formatCurrency(totalDevisTTC)}</p>
                     <p className="text-xs text-slate-400 mt-1">Montant total des devis acceptés</p>
                 </div>
 
-                <div className="glass p-6 rounded-2xl border-l-4 border-l-emerald-500">
+                <div className="glass p-3 rounded-2xl">
                     <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-bold text-slate-400 uppercase">Encaissé</p>
                         <TrendingUp size={20} className="text-emerald-500" />
                     </div>
-                    <p className="text-2xl font-black text-slate-900">{formatCurrency(totalPaid)}</p>
+                    <p className="text-xl font-black text-slate-900">{formatCurrency(totalPaid)}</p>
                     <p className="text-xs text-slate-400 mt-1">{((totalPaid / totalDevisTTC) * 100).toFixed(0)}% du total devisé</p>
                 </div>
 
-                <div className="glass p-6 rounded-2xl border-l-4 border-l-rose-500">
+                <div className="glass p-3 rounded-2xl ">
                     <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-bold text-slate-400 uppercase">Dépenses</p>
                         <AlertCircle size={20} className="text-rose-500" />
                     </div>
-                    <p className="text-2xl font-black text-slate-900">{formatCurrency(totalExpenses)}</p>
+                    <p className="text-xl font-black text-slate-900">{formatCurrency(totalExpenses)}</p>
                     <p className="text-xs text-slate-400 mt-1">Coûts engagés à ce jour</p>
                 </div>
 
-                <div className="glass p-6 rounded-2xl border-l-4 border-l-indigo-500 shadow-indigo-100">
+                <div className="glass p-3 rounded-2xl">
                     <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-bold text-slate-400 uppercase">Bénéfice Net</p>
                         <CheckCircle2 size={20} className="text-indigo-500" />
                     </div>
                     <p className={cn(
-                        "text-2xl font-black",
+                        "text-xl font-black",
                         netProfit >= 0 ? "text-slate-900" : "text-rose-600"
                     )}>
                         {formatCurrency(netProfit)}
@@ -147,40 +147,7 @@ export default function ChantierDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Rentability & Synthesis */}
                 <div className="lg:col-span-2 space-y-8">
-                    {/* Rentability Meter */}
-                    <div className="glass p-8 rounded-3xl space-y-6 overflow-hidden">
-                        <h3 className="text-xl font-bold text-slate-900">Analyse de Rentabilité</h3>
-                        <div className="space-y-4">
-                            <div className="flex items-end justify-between">
-                                <div>
-                                    <p className="text-sm font-bold text-slate-400 uppercase">Marge brute estimée</p>
-                                    <p className="text-3xl font-black text-slate-900">{marginPercentage.toFixed(1)}%</p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-sm font-bold text-slate-400 uppercase">Reste à payer client</p>
-                                    <p className="text-xl font-bold text-amber-600">{formatCurrency(remainingToPay)}</p>
-                                </div>
-                            </div>
-
-                            <div className="relative h-4 bg-slate-100 rounded-full overflow-hidden">
-                                <div
-                                    className={cn(
-                                        "absolute top-0 left-0 h-full transition-all duration-1000",
-                                        marginPercentage > 20 ? "bg-emerald-500" : marginPercentage > 5 ? "bg-blue-500" : "bg-rose-500"
-                                    )}
-                                    style={{ width: `${Math.min(100, Math.max(0, marginPercentage))}%` }}
-                                />
-                            </div>
-                            <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-widest">
-                                <span>0%</span>
-                                <span>25%</span>
-                                <span>50%</span>
-                                <span>75%</span>
-                                <span>100%</span>
-                            </div>
-                        </div>
-                    </div>
-
+                    
                     {/* Activity Tabs (Mockup) */}
                     <div className="space-y-4">
                         <h3 className="text-xl font-bold text-slate-900">Historique Financier</h3>
@@ -188,7 +155,6 @@ export default function ChantierDetailPage() {
                             <div className="flex border-b border-slate-100">
                                 <button className="px-6 py-4 text-sm font-bold text-primary-600 border-b-2 border-primary-600">Encaissements</button>
                                 <button className="px-6 py-4 text-sm font-bold text-slate-400 hover:text-slate-600">Dépenses</button>
-                                <button className="px-6 py-4 text-sm font-bold text-slate-400 hover:text-slate-600">Devis</button>
                             </div>
                             <div className="p-6 overflow-x-auto">
                                 <table className="w-full text-left">
@@ -221,7 +187,7 @@ export default function ChantierDetailPage() {
 
                 {/* Right Column: Key Contacts / Quick Actions */}
                 <div className="space-y-6">
-                    <div className="glass p-6 rounded-3xl space-y-4">
+                    <div className="glass p-3 rounded-3xl space-y-4">
                         <h3 className="font-bold text-slate-900">Contacts Clés</h3>
                         <div className="space-y-4">
                             <div className="flex items-center space-x-3 p-3 rounded-2xl bg-slate-50">
@@ -237,23 +203,6 @@ export default function ChantierDetailPage() {
                         </div>
                     </div>
 
-                    <div className="glass p-6 rounded-3xl bg-slate-900 text-white shadow-xl shadow-slate-900/20">
-                        <h3 className="font-bold mb-4">Actions Rapides</h3>
-                        <div className="space-y-2">
-                            <Link href="/paiements" className="flex items-center space-x-3 w-full p-2.5 rounded-xl hover:bg-white/10 transition-colors">
-                                <TrendingUp size={18} />
-                                <span className="text-sm font-semibold">Ajouter une avance</span>
-                            </Link>
-                            <Link href="/depenses" className="flex items-center space-x-3 w-full p-2.5 rounded-xl hover:bg-white/10 transition-colors">
-                                <Receipt size={18} />
-                                <span className="text-sm font-semibold">Saisir une dépense</span>
-                            </Link>
-                            <Link href="/devis/nouveau" className="flex items-center space-x-3 w-full p-2.5 rounded-xl hover:bg-white/10 transition-colors">
-                                <FileText size={18} />
-                                <span className="text-sm font-semibold">Faire un nouveau devis</span>
-                            </Link>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

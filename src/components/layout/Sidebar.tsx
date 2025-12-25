@@ -10,7 +10,8 @@ import {
     Receipt,
     Settings,
     Menu,
-    X
+    X,
+    UserCircle
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -30,13 +31,30 @@ export default function Sidebar() {
 
     return (
         <>
-            {/* Mobile Menu Toggle */}
-            <button
-                className="fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-md lg:hidden"
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                {isOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
+            {/* Mobile Top Bar */}
+            <div className="fixed top-0 left-0 right-0 z-50 h-16 glass-strong lg:hidden flex items-center justify-between px-4 border-b border-slate-200/50">
+                <button
+                    className="p-2.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-600 active:scale-95"
+                    onClick={() => setIsOpen(!isOpen)}
+                >
+                    {isOpen ? <X size={22} /> : <Menu size={22} />}
+                </button>
+
+                <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-primary-600/10 rounded-lg flex items-center justify-center">
+                        <HardHat size={18} className="text-primary-600" />
+                    </div>
+                    <span className="font-black text-slate-900 tracking-tight">
+                        BTP<span className="text-primary-600">Dash</span>
+                    </span>
+                </div>
+
+                <button className="p-1 rounded-full border-2 border-primary-100 p-0.5 hover:border-primary-300 transition-all active:scale-95">
+                    <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
+                        <UserCircle size={28} className="text-slate-400" />
+                    </div>
+                </button>
+            </div>
 
             {/* Sidebar */}
             <aside className={cn(

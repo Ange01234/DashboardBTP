@@ -20,7 +20,7 @@ export default function EditDevisPage() {
     const { id } = useParams();
     const [chantierId, setChantierId] = useState('');
     const [lineItems, setLineItems] = useState<Omit<LineItem, 'id'>[]>([]);
-    const [tvaRate, setTvaRate] = useState(0.20);
+    const [tvaRate, setTvaRate] = useState(0.18);
     const [status, setStatus] = useState<any>('Brouillon');
 
     useEffect(() => {
