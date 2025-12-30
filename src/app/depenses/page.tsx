@@ -10,15 +10,16 @@ import {
     ExternalLink,
     ShoppingBag
 } from 'lucide-react';
-import { MOCK_EXPENSES, MOCK_CHANTIERS } from '@/lib/mockData';
+import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function DepensesPage() {
+    const { expenses, chantiers } = useData();
     const [search, setSearch] = useState('');
 
-    const filteredExpenses = MOCK_EXPENSES.filter(e => {
-        const chantier = MOCK_CHANTIERS.find(c => c.id === e.chantierId);
+    const filteredExpenses = expenses.filter(e => {
+        const chantier = chantiers.find(c => c.id === e.chantierId);
         return chantier?.name.toLowerCase().includes(search.toLowerCase()) ||
             e.provider.toLowerCase().includes(search.toLowerCase()) ||
             e.type.toLowerCase().includes(search.toLowerCase());
@@ -52,7 +53,7 @@ export default function DepensesPage() {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {filteredExpenses.map((expense) => {
-                            const chantier = MOCK_CHANTIERS.find(c => c.id === expense.chantierId);
+                            const chantier = chantiers.find(c => c.id === expense.chantierId);
                             return (
                                 <tr key={expense.id} className="hover:bg-slate-50/50 transition-colors group">
                                     <td className="px-6 py-4">

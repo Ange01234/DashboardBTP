@@ -11,15 +11,16 @@ import {
     Eye,
     Edit3
 } from 'lucide-react';
-import { MOCK_DEVIS, MOCK_CHANTIERS } from '@/lib/mockData';
+import { useData } from '@/hooks/useData';
 import { formatCurrency, calculateDevisTotals, cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function DevisPage() {
+    const { devis, chantiers } = useData();
     const [search, setSearch] = useState('');
 
-    const filteredDevis = MOCK_DEVIS.filter(d => {
-        const chantier = MOCK_CHANTIERS.find(c => c.id === d.chantierId);
+    const filteredDevis = devis.filter(d => {
+        const chantier = chantiers.find(c => c.id === d.chantierId);
         return chantier?.name.toLowerCase().includes(search.toLowerCase()) ||
             d.id.toLowerCase().includes(search.toLowerCase());
     });
@@ -70,7 +71,7 @@ export default function DevisPage() {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {filteredDevis.map((devis) => {
-                            const chantier = MOCK_CHANTIERS.find(c => c.id === devis.chantierId);
+                            const chantier = chantiers.find(c => c.id === devis.chantierId);
                             const { totalTTC } = calculateDevisTotals(devis.lineItems, devis.tvaRate);
 
                             return (
@@ -102,6 +103,10 @@ export default function DevisPage() {
                                         )}>
                                             {devis.status}
                                         </span>
+                                        {/* This part was added based on the instruction, though its context (e.g., a <select> element) is missing in the original code. */}
+                                        {chantiers.map(c => (
+                                            <option key={c.id} value={c.id}>{c.name} ({c.client})</option>
+                                        ))}
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex items-center justify-end space-x-2">

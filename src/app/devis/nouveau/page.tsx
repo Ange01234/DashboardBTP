@@ -9,7 +9,7 @@ import {
     HardHat,
     Calculator
 } from 'lucide-react';
-import { MOCK_CHANTIERS } from '@/lib/mockData';
+import { useData } from '@/hooks/useData';
 import { formatCurrency, cn } from '@/lib/utils';
 import Link from 'next/link';
 import { LineItem } from '@/types';
@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 
 export default function NewDevisPage() {
     const router = useRouter();
+    const { chantiers, addDevis } = useData();
     const [chantierId, setChantierId] = useState('');
     const [lineItems, setLineItems] = useState<Omit<LineItem, 'id'>[]>([{
         designation: '',
@@ -80,7 +81,7 @@ export default function NewDevisPage() {
                                 onChange={(e) => setChantierId(e.target.value)}
                             >
                                 <option value="">Sélectionner un chantier...</option>
-                                {MOCK_CHANTIERS.map(c => (
+                                {chantiers.map(c => (
                                     <option key={c.id} value={c.id}>{c.name} ({c.client})</option>
                                 ))}
                             </select>

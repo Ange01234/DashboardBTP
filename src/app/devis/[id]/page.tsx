@@ -12,14 +12,15 @@ import {
     HardHat,
     Printer
 } from 'lucide-react';
-import { MOCK_DEVIS, MOCK_CHANTIERS } from '@/lib/mockData';
+import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, calculateDevisTotals, cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function ViewDevisPage() {
     const { id } = useParams();
-    const devis = MOCK_DEVIS.find(d => d.id === id);
-    const chantier = devis ? MOCK_CHANTIERS.find(c => c.id === devis.chantierId) : null;
+    const { devis: allDevis, chantiers } = useData();
+    const devis = allDevis.find(d => d.id === id);
+    const chantier = devis ? chantiers.find(c => c.id === devis.chantierId) : null;
 
     if (!devis || !chantier) {
         return <div className="p-20 text-center">Devis non trouvé.</div>;
@@ -36,10 +37,6 @@ export default function ViewDevisPage() {
                     <span>Retour aux devis</span>
                 </Link>
                 <div className="flex space-x-3">
-                    <button className="px-4 py-2 border border-slate-200 rounded-xl text-slate-600 font-bold hover:bg-white transition-all flex items-center space-x-2">
-                        <Printer size={18} />
-                        <span>Imprimer</span>
-                    </button>
                     <button className="px-4 py-2 border border-slate-200 rounded-xl text-slate-600 font-bold hover:bg-white transition-all flex items-center space-x-2">
                         <Download size={18} />
                         <span>PDF</span>
@@ -138,7 +135,7 @@ export default function ViewDevisPage() {
                             </div>
                             <div className="flex justify-between items-end pt-2">
                                 <span className="text-lg font-black text-slate-900">NET À PAYER TTC</span>
-                                <span className="text-4xl font-black text-primary-600">{formatCurrency(totalTTC)}</span>
+                                <span className="text-2xl font-black text-primary-600">{formatCurrency(totalTTC)}</span>
                             </div>
                         </div>
                     </div>

@@ -16,6 +16,8 @@ import {
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext';
+import { LogOut, Sparkles } from 'lucide-react';
 
 const navigation = [
     { name: 'Dashboard', href: '/', icon: BarChart3 },
@@ -27,6 +29,7 @@ const navigation = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const { logout, isDemoMode } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -102,10 +105,28 @@ export default function Sidebar() {
                     </nav>
 
                     {/* Bottom section */}
-                    <div className="p-4 border-t border-slate-200">
+                    <div className="p-4 border-t border-slate-200 space-y-2">
+                        {isDemoMode && (
+                            <div className="px-4 py-3 bg-amber-50 rounded-xl border border-amber-100 mb-4">
+                                <div className="flex items-center space-x-2 text-amber-700">
+                                    <Sparkles size={16} className="animate-pulse" />
+                                    <span className="text-xs font-bold uppercase tracking-wider">Mode Démo</span>
+                                </div>
+                                <p className="text-[10px] text-amber-600 mt-1 leading-tight">
+                                    Données statiques pour démo.
+                                </p>
+                            </div>
+                        )}
                         <button className="sidebar-link w-full">
                             <Settings size={20} />
                             <span>Réglages</span>
+                        </button>
+                        <button
+                            onClick={logout}
+                            className="sidebar-link w-full text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                        >
+                            <LogOut size={20} />
+                            <span>Déconnexion</span>
                         </button>
                     </div>
                 </div>

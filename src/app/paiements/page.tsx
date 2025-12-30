@@ -8,18 +8,21 @@ import {
     ArrowRight,
     History
 } from 'lucide-react';
-import { MOCK_PAYMENTS, MOCK_CHANTIERS } from '@/lib/mockData';
+import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function PaiementsPage() {
+    const { payments, chantiers } = useData();
     const [search, setSearch] = useState('');
 
-    const filteredPayments = MOCK_PAYMENTS.filter(p => {
-        const chantier = MOCK_CHANTIERS.find(c => c.id === p.chantierId);
+    const filteredPayments = payments.filter(p => {
+        const chantier = chantiers.find(c => c.id === p.chantierId);
         return chantier?.name.toLowerCase().includes(search.toLowerCase()) ||
             p.method.toLowerCase().includes(search.toLowerCase());
     });
+
+    const totalEncaissed = payments.reduce((acc, p) => acc + p.amount, 0);
 
     return (
         <div className="space-y-8">
@@ -40,18 +43,18 @@ export default function PaiementsPage() {
                 <div className="glass p-6 rounded-2xl bg-emerald-50/50 border-emerald-100">
                     <p className="text-sm font-semibold text-emerald-600 mb-1">Total Encaissé</p>
                     <h3 className="text-2xl font-bold text-slate-900">
-                        {formatCurrency(MOCK_PAYMENTS.reduce((acc, p) => acc + p.amount, 0))}
+                        {formatCurrency(totalEncaissed)}
                     </h3>
                 </div>
                 <div className="glass p-6 rounded-2xl bg-blue-50/50 border-blue-100">
                     <p className="text-sm font-semibold text-blue-600 mb-1">Paiement Récent</p>
                     <h3 className="text-2xl font-bold text-slate-900">
-                        {formatCurrency(MOCK_PAYMENTS[0]?.amount || 0)}
+                        {formatCurrency(payments[0]?.amount || 0)}
                     </h3>
                 </div>
                 <div className="glass p-6 rounded-2xl bg-slate-50/50 border-slate-200">
                     <p className="text-sm font-semibold text-slate-500 mb-1">Nombre d'opérations</p>
-                    <h3 className="text-2xl font-bold text-slate-900">{MOCK_PAYMENTS.length}</h3>
+                    <h3 className="text-2xl font-bold text-slate-900">{payments.length}</h3>
                 </div>
             </div>
 
@@ -81,7 +84,7 @@ export default function PaiementsPage() {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {filteredPayments.map((payment) => {
-                            const chantier = MOCK_CHANTIERS.find(c => c.id === payment.chantierId);
+                            const chantier = chantiers.find(c => c.id === payment.chantierId);
                             return (
                                 <tr key={payment.id} className="hover:bg-slate-50/50 transition-colors group">
                                     <td className="px-6 py-4 text-sm text-slate-600">

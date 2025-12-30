@@ -15,27 +15,23 @@ import {
     Download,
     CheckCircle2
 } from 'lucide-react';
-import {
-    MOCK_CHANTIERS,
-    MOCK_DEVIS,
-    MOCK_PAYMENTS,
-    MOCK_EXPENSES
-} from '@/lib/mockData';
+import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, calculateDevisTotals, cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function ChantierDetailPage() {
     const { id } = useParams();
-    const chantier = MOCK_CHANTIERS.find(c => c.id === id);
+    const { chantiers, devis, payments, expenses } = useData();
+    const chantier = chantiers.find(c => c.id === id);
 
     if (!chantier) {
         return <div className="p-20 text-center">Chantier non trouvé.</div>;
     }
 
     // Filter linked data
-    const chantierDevis = MOCK_DEVIS.filter(d => d.chantierId === id);
-    const chantierPayments = MOCK_PAYMENTS.filter(p => p.chantierId === id);
-    const chantierExpenses = MOCK_EXPENSES.filter(e => e.chantierId === id);
+    const chantierDevis = devis.filter(d => d.chantierId === id);
+    const chantierPayments = payments.filter(p => p.chantierId === id);
+    const chantierExpenses = expenses.filter(e => e.chantierId === id);
 
     // Calculations
     const totalDevisTTC = chantierDevis.reduce((acc, d) => acc + calculateDevisTotals(d.lineItems, d.tvaRate).totalTTC, 0);
@@ -147,7 +143,7 @@ export default function ChantierDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Rentability & Synthesis */}
                 <div className="lg:col-span-2 space-y-8">
-                    
+
                     {/* Activity Tabs (Mockup) */}
                     <div className="space-y-4">
                         <h3 className="text-xl font-bold text-slate-900">Historique Financier</h3>

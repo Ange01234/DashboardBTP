@@ -11,18 +11,19 @@ import {
     MoreVertical,
     HardHat
 } from 'lucide-react';
-import { MOCK_CHANTIERS } from '@/lib/mockData';
+import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChantierStatus } from '@/types';
+import { ChantierStatus, Chantier } from '@/types';
 
 export default function ChantiersPage() {
     const router = useRouter();
+    const { chantiers } = useData();
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<ChantierStatus | 'Tous'>('Tous');
 
-    const filteredChantiers = MOCK_CHANTIERS.filter(c => {
+    const filteredChantiers = chantiers.filter((c: Chantier) => {
         const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) ||
             c.client.toLowerCase().includes(search.toLowerCase());
         const matchesStatus = statusFilter === 'Tous' || c.status === statusFilter;

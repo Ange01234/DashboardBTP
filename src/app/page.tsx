@@ -1,3 +1,5 @@
+'use client';
+
 import {
   TrendingUp,
   Wallet,
@@ -6,16 +8,18 @@ import {
   AlertCircle
 } from 'lucide-react';
 import StatCard from '@/components/dashboard/StatCard';
-import { MOCK_CHANTIERS, MOCK_EXPENSES, MOCK_PAYMENTS } from '@/lib/mockData';
+import { useData } from '@/hooks/useData';
 import { formatCurrency, cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function Dashboard() {
+  const { chantiers, expenses, payments } = useData();
+
   // Aggregate data for stats
-  const totalBudget = MOCK_CHANTIERS.reduce((acc, c) => acc + c.budget, 0);
-  const totalPaid = MOCK_PAYMENTS.reduce((acc, p) => acc + p.amount, 0);
-  const totalExpenses = MOCK_EXPENSES.reduce((acc, e) => acc + e.amount, 0);
-  const activeProjects = MOCK_CHANTIERS.filter(c => c.status === 'En cours').length;
+  const totalBudget = chantiers.reduce((acc, c) => acc + c.budget, 0);
+  const totalPaid = payments.reduce((acc, p) => acc + p.amount, 0);
+  const totalExpenses = expenses.reduce((acc, e) => acc + e.amount, 0);
+  const activeProjects = chantiers.filter(c => c.status === 'En cours').length;
 
   return (
     <div className="space-y-10">
@@ -32,14 +36,14 @@ export default function Dashboard() {
           value={formatCurrency(totalBudget)}
           icon={Wallet}
           trend={{ value: 12, isPositive: true }}
-          description="Basé sur 3 chantiers actifs"
+          description={`Basé sur ${chantiers.length} chantiers`}
         />
         <StatCard
           title="Total Encaissé"
           value={formatCurrency(totalPaid)}
           icon={TrendingUp}
           trend={{ value: 8, isPositive: true }}
-          description={`${((totalPaid / totalBudget) * 100).toFixed(1)}% du budget total`}
+          description={totalBudget > 0 ? `${((totalPaid / totalBudget) * 100).toFixed(1)}% du budget total` : "Aucun budget défini"}
         />
         <StatCard
           title="Dépenses Cumulées"
@@ -67,7 +71,7 @@ export default function Dashboard() {
             </Link>
           </div>
 
-          <div className="glass rounded-2xl overflow-hidden over-y-auto">
+          <div className="glass rounded-2xl overflow-hidden over-y-auto min-h-[300px]">
             <table className="w-full text-left">
               <thead className="bg-slate-50/50 border-b border-slate-100">
                 <tr>
@@ -78,7 +82,7 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {MOCK_CHANTIERS.slice(0, 5).map((chantier) => (
+                {chantiers.length > 0 ? chantiers.slice(0, 5).map((chantier) => (
                   <tr key={chantier.id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors">
@@ -101,7 +105,13 @@ export default function Dashboard() {
                       </span>
                     </td>
                   </tr>
-                ))}
+                )) : (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center text-slate-400">
+                      Aucun chantier trouvé.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

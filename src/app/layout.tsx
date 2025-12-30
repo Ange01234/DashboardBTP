@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/layout/Sidebar";
+import { AuthProvider } from "@/context/AuthContext";
+import LayoutContent from "@/components/layout/LayoutContent";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,14 +19,11 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={`${inter.className} antialiased`}>
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <main className="flex-1 lg:ml-72 bg-slate-50 min-h-screen">
-            <div className="pt-16 p-4 md:p-8 lg:p-12">
-              {children}
-            </div>
-          </main>
-        </div>
+        <AuthProvider>
+          <LayoutContent>
+            {children}
+          </LayoutContent>
+        </AuthProvider>
       </body>
     </html>
   );
