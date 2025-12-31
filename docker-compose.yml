@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  dashboard_btp:
+    build: .
+    container_name: dashboard_btp
+    ports:
+      - "5500:5500"
+    environment:
+      - PORT=5500
+    restart: unless-stopped
