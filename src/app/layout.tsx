@@ -4,7 +4,13 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import LayoutContent from "@/components/layout/LayoutContent";
 
-const inter = Inter({ subsets: ["latin"] });
+import localFont from 'next/font/local'
+
+const inter = localFont({
+  src: './fonts/Inter-VariableFont.ttf',
+  display: 'swap',
+})
+
 
 export const metadata: Metadata = {
   title: "BTPDash | Gestion de Chantier",
