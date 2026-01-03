@@ -20,7 +20,10 @@ export default function DevisPage() {
     const [search, setSearch] = useState('');
 
     const filteredDevis = devis.filter(d => {
-        const chantier = chantiers.find(c => c.id === d.chantierId);
+        // Handle both populated object and string ID
+        const chantierIdStr = typeof d.chantierId === 'object' ? (d.chantierId as any)._id || d.chantierId.id : d.chantierId;
+        const chantier = chantiers.find(c => c.id === chantierIdStr);
+
         return chantier?.name.toLowerCase().includes(search.toLowerCase()) ||
             d.id.toLowerCase().includes(search.toLowerCase());
     });
@@ -70,8 +73,10 @@ export default function DevisPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {filteredDevis.map((devis) => {
-                            const chantier = chantiers.find(c => c.id === devis.chantierId);
+                        {filteredDevis.map((devis, index) => {
+                            const chantierIdStr = typeof devis.chantierId === 'object' ? (devis.chantierId as any)._id || devis.chantierId.id : devis.chantierId;
+                            const chantier = chantiers.find(c => c.id === chantierIdStr);
+
                             const { totalTTC } = calculateDevisTotals(devis.lineItems, devis.tvaRate);
 
                             return (
@@ -81,7 +86,7 @@ export default function DevisPage() {
                                             <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center text-primary-600">
                                                 <FileText size={16} />
                                             </div>
-                                            <span className="font-bold text-slate-900 uppercase">#{devis.id}</span>
+                                            <span className="font-bold text-slate-900 uppercase">#{index + 1}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -96,7 +101,6 @@ export default function DevisPage() {
                                     <td className="px-6 py-4">
                                         <span className={cn(
                                             "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                                            devis.status === 'Accepté' ? "bg-emerald-50 text-emerald-700" :
                                                 devis.status === 'Brouillon' ? "bg-slate-50 text-slate-600" :
                                                     devis.status === 'Envoyé' ? "bg-blue-50 text-blue-700" :
                                                         "bg-rose-50 text-rose-700"

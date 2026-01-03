@@ -1,5 +1,5 @@
 export type ChantierStatus = "En cours" | "Terminé" | "Suspendu";
-export type DevisStatus = "Brouillon" | "Envoyé" | "Accepté" | "Refusé";
+export type DevisStatus = "Brouillon" | "Envoyé" ;
 export type ExpenseType = "matériaux" | "main-d’œuvre" | "transport" | "autre";
 export type PaymentMethod = "Virement" | "Chèque" | "Espèces" | "Mobile Money";
 
@@ -12,7 +12,7 @@ export interface LineItem {
 
 export interface Devis {
   id: string;
-  chantierId: string;
+  chantierId: string | Chantier;
   date: string;
   status: DevisStatus;
   lineItems: LineItem[];
@@ -56,4 +56,24 @@ export interface ProjectSynthesis {
   totalExpenses: number;
   profitability: number;
   remainingToPay: number;
+}
+
+export interface RegisterDto {
+    email: string;
+    password: string;
+    name: string;
+}
+
+export interface LoginDto {
+    email: string;
+    password: string;
+}
+
+export interface AuthResponse {
+    access_token: string;
+    user: {
+        id: string;
+        email: string;
+        name: string;
+    };
 }

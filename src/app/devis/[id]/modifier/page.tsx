@@ -9,8 +9,8 @@ import {
     HardHat,
     Calculator
 } from 'lucide-react';
-import { MOCK_DEVIS, MOCK_CHANTIERS } from '@/lib/mockData';
-import { formatCurrency, calculateDevisTotals, cn } from '@/lib/utils';
+import { useData } from '@/hooks/useData';
+import { formatCurrency, calculateDevisTotals, cn, formatDateForInput } from '@/lib/utils';
 import Link from 'next/link';
 import { LineItem } from '@/types';
 import { useRouter, useParams } from 'next/navigation';
@@ -18,20 +18,25 @@ import { useRouter, useParams } from 'next/navigation';
 export default function EditDevisPage() {
     const router = useRouter();
     const { id } = useParams();
+    const { devis: allDevis, chantiers, updateDevis, loading } = useData();
+    const [isSaving, setIsSaving] = useState(false);
     const [chantierId, setChantierId] = useState('');
     const [lineItems, setLineItems] = useState<Omit<LineItem, 'id'>[]>([]);
     const [tvaRate, setTvaRate] = useState(0.18);
     const [status, setStatus] = useState<any>('Brouillon');
+    const [date, setDate] = useState('');
 
     useEffect(() => {
-        const devis = MOCK_DEVIS.find(d => d.id === id);
+        const devis = allDevis.find(d => d.id === id);
         if (devis) {
-            setChantierId(devis.chantierId);
+            const cId = devis.chantierId;
+            setChantierId(typeof cId === 'object' ? (cId as any)._id || cId.id : cId);
             setLineItems(devis.lineItems.map(({ id, ...rest }) => rest));
             setTvaRate(devis.tvaRate);
             setStatus(devis.status);
+            setDate(formatDateForInput(devis.date));
         }
-    }, [id]);
+    }, [allDevis, id]);
 
     const addLine = () => {
         setLineItems([...lineItems, { designation: '', quantity: 1, unitPrice: 0 }]);
@@ -47,6 +52,24 @@ export default function EditDevisPage() {
         setLineItems(newLines);
     };
 
+    const handleSubmit = async () => {
+        setIsSaving(true);
+        try {
+            await updateDevis(id as string, {
+                chantierId,
+                lineItems: lineItems.map((item, idx) => ({ ...item, id: idx.toString() })),
+                tvaRate,
+                status,
+                date
+            });
+            router.push(`/devis/${id}`);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const totals = calculateDevisTotals(lineItems, tvaRate);
 
     return (
@@ -58,16 +81,17 @@ export default function EditDevisPage() {
                         <ChevronLeft size={20} />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900">Modifier le Devis #{id?.toString().toUpperCase()}</h1>
+                        <h1 className="text-2xl font-bold text-slate-900">Modifier le Devis </h1>
                         <p className="text-sm text-slate-500 mt-0.5">Mettez à jour les lignes de votre devis.</p>
                     </div>
                 </div>
                 <button
-                    onClick={() => router.push(`/devis/${id}`)}
-                    className="btn-primary flex items-center space-x-2"
+                    onClick={handleSubmit}
+                    disabled={isSaving}
+                    className="btn-primary flex items-center space-x-2 disabled:opacity-50"
                 >
-                    <Save size={20} />
-                    <span>Enregistrer les modifications</span>
+                    <Save size={18} />
+                    <span>{isSaving ? 'Enregistrement...' : 'Enregistrer les modifications'}</span>
                 </button>
             </div>
 
@@ -81,7 +105,7 @@ export default function EditDevisPage() {
                             value={chantierId}
                             onChange={(e) => setChantierId(e.target.value)}
                         >
-                            {MOCK_CHANTIERS.map(c => (
+                            {chantiers.map(c => (
                                 <option key={c.id} value={c.id}>{c.name}</option>
                             ))}
                         </select>
@@ -95,8 +119,6 @@ export default function EditDevisPage() {
                         >
                             <option value="Brouillon">Brouillon</option>
                             <option value="Envoyé">Envoyé</option>
-                            <option value="Accepté">Accepté</option>
-                            <option value="Refusé">Refusé</option>
                         </select>
                     </div>
                     <div className="space-y-2">

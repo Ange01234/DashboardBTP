@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { authService } from '@/services/auth.service';
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -22,28 +23,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const authStatus = localStorage.getItem('btp_auth');
         const demoStatus = localStorage.getItem('btp_demo');
+        const token = localStorage.getItem('btp_token');
 
-        if (authStatus === 'true') {
+        if (authStatus === 'true' && token) {
             setIsAuthenticated(true);
         } else if (demoStatus === 'true') {
             setIsDemoMode(true);
-        } else if (pathname !== '/login') {
+        } else if (pathname !== '/login' && !pathname.startsWith('/register')) {
             router.push('/login');
         }
     }, [pathname, router]);
 
     const login = async (email: string, password: string) => {
-        // Mock login logic - in a real app, this would be an API call
-        if (email && password) {
+        try {
+            const response = await authService.login({ email, password });
+            localStorage.setItem('btp_token', response.access_token);
             localStorage.setItem('btp_auth', 'true');
             localStorage.removeItem('btp_demo');
             setIsAuthenticated(true);
             setIsDemoMode(false);
             router.push('/');
+        } catch (error) {
+            console.error('Login failed:', error);
+            throw error;
         }
     };
 
     const logout = () => {
+        localStorage.removeItem('btp_token');
         localStorage.removeItem('btp_auth');
         localStorage.removeItem('btp_demo');
         setIsAuthenticated(false);

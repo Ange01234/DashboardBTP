@@ -12,9 +12,13 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useData } from '@/hooks/useData';
+import { ChantierStatus } from '@/types';
 
 export default function NewChantierPage() {
     const router = useRouter();
+    const { addChantier } = useData();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         client: '',
@@ -22,17 +26,33 @@ export default function NewChantierPage() {
         startDate: '',
         endDate: '',
         budget: '',
-        status: 'En cours'
+        status: 'En cours' as ChantierStatus
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, we would save the data here
-        router.push('/chantiers');
+        try {
+            setIsSubmitting(true);
+            await addChantier({
+                name: formData.name,
+                client: formData.client,
+                location: formData.location,
+                startDate: formData.startDate,
+                endDate: formData.endDate || undefined,
+                budget: parseFloat(formData.budget) || 0,
+                status: formData.status
+            });
+            router.push('/chantiers');
+        } catch (error) {
+            console.error('Failed to create chantier:', error);
+            alert('Erreur lors de la création du chantier');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
-        <div className="max-w-3xl mx-auto space-y-8">
+        <div className=" space-y-8">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -46,10 +66,11 @@ export default function NewChantierPage() {
                 </div>
                 <button
                     onClick={handleSubmit}
-                    className="btn-primary flex items-center space-x-2"
+                    disabled={isSubmitting}
+                    className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <Save size={20} />
-                    <span>Enregistrer</span>
+                    <span>{isSubmitting ? 'Enregistrement...' : 'Enregistrer'}</span>
                 </button>
             </div>
 
@@ -160,7 +181,7 @@ export default function NewChantierPage() {
                             <select
                                 className="w-full px-4 py-3 rounded-xl border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 transition-all bg-white"
                                 value={formData.status}
-                                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                onChange={(e) => setFormData({ ...formData, status: e.target.value as ChantierStatus })}
                             >
                                 <option value="En cours">En cours</option>
                                 <option value="Terminé">Terminé</option>

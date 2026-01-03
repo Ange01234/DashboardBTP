@@ -70,7 +70,7 @@ export default function ChantierDetailPage() {
                         )}>
                             {chantier.status}
                         </span>
-                        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">{chantier.name}</h1>
+                        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-2">{chantier.name}</h1>
                         <div className="flex flex-wrap gap-4 text-slate-500 mt-2">
                             <div className="flex items-center space-x-1">
                                 <User size={16} />
@@ -97,34 +97,31 @@ export default function ChantierDetailPage() {
 
             {/* Financial Overview Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="glass p-3 rounded-2xl">
+                <div className="glass p-4 rounded-2xl">
                     <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-bold text-slate-400 uppercase">Total Devis</p>
                         <FileText size={20} className="text-blue-500" />
                     </div>
                     <p className="text-xl font-black text-slate-900">{formatCurrency(totalDevisTTC)}</p>
-                    <p className="text-xs text-slate-400 mt-1">Montant total des devis acceptés</p>
                 </div>
 
-                <div className="glass p-3 rounded-2xl">
+                <div className="glass p-4 rounded-2xl">
                     <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-bold text-slate-400 uppercase">Encaissé</p>
                         <TrendingUp size={20} className="text-emerald-500" />
                     </div>
                     <p className="text-xl font-black text-slate-900">{formatCurrency(totalPaid)}</p>
-                    <p className="text-xs text-slate-400 mt-1">{((totalPaid / totalDevisTTC) * 100).toFixed(0)}% du total devisé</p>
                 </div>
 
-                <div className="glass p-3 rounded-2xl ">
+                <div className="glass p-4 rounded-2xl ">
                     <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-bold text-slate-400 uppercase">Dépenses</p>
                         <AlertCircle size={20} className="text-rose-500" />
                     </div>
                     <p className="text-xl font-black text-slate-900">{formatCurrency(totalExpenses)}</p>
-                    <p className="text-xs text-slate-400 mt-1">Coûts engagés à ce jour</p>
                 </div>
 
-                <div className="glass p-3 rounded-2xl">
+                <div className="glass p-4 rounded-2xl">
                     <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-bold text-slate-400 uppercase">Bénéfice Net</p>
                         <CheckCircle2 size={20} className="text-indigo-500" />
@@ -135,7 +132,6 @@ export default function ChantierDetailPage() {
                     )}>
                         {formatCurrency(netProfit)}
                     </p>
-                    <p className="text-xs text-slate-400 mt-1">Rentabilité : {marginPercentage.toFixed(1)}%</p>
                 </div>
             </div>
 
@@ -187,7 +183,7 @@ export default function ChantierDetailPage() {
                         <h3 className="font-bold text-slate-900">Contacts Clés</h3>
                         <div className="space-y-4">
                             <div className="flex items-center space-x-3 p-3 rounded-2xl bg-slate-50">
-                                <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold">JD</div>
+                                <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold">{chantier.client.charAt(0).toUpperCase()}</div>
                                 <div>
                                     <p className="text-sm font-bold text-slate-900">{chantier.client}</p>
                                     <p className="text-xs text-slate-500">Client Principal</p>

@@ -39,6 +39,26 @@ export default function NewDevisPage() {
         setLineItems(newLines);
     };
 
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleSubmit = async () => {
+        setIsSaving(true);
+        try {
+            await addDevis({
+                chantierId,
+                lineItems: lineItems.map((item, idx) => ({ ...item, id: idx.toString() })),
+                tvaRate: 0.18, // Default TVA, could be made dynamic later
+                status: 'Brouillon',
+                date: new Date().toISOString()
+            });
+            router.push('/devis');
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const totalHT = lineItems.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
     const tva = totalHT * 0.18;
     const totalTTC = totalHT + tva;
@@ -57,11 +77,12 @@ export default function NewDevisPage() {
                     </div>
                 </div>
                 <button
-                    onClick={() => router.push('/devis')}
-                    className="btn-primary flex items-center space-x-2"
+                    onClick={handleSubmit}
+                    disabled={isSaving}
+                    className="btn-primary flex items-center space-x-2 disabled:opacity-50"
                 >
                     <Save size={20} />
-                    <span>Enregistrer le Devis</span>
+                    <span>{isSaving ? 'Enregistrement...' : 'Enregistrer le Devis'}</span>
                 </button>
             </div>
 
@@ -128,7 +149,7 @@ export default function NewDevisPage() {
                                     />
                                 </div>
                                 <div className="w-full md:w-40 space-y-2">
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Prix Unit. HT</label>
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Prix Unit</label>
                                     <div className="relative">
                                         <input
                                             type="number"
@@ -137,7 +158,6 @@ export default function NewDevisPage() {
                                             value={item.unitPrice}
                                             onChange={(e) => updateLine(index, 'unitPrice', parseFloat(e.target.value) || 0)}
                                         />
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">CFA</span>
                                     </div>
                                 </div>
                                 <div className="w-full md:w-32 space-y-2">

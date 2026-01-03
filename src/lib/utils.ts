@@ -19,6 +19,13 @@ export function formatDate(date: string) {
   return format(new Date(date), 'dd MMMM yyyy', { locale: fr });
 }
 
+export function formatDateForInput(date: string | Date | undefined) {
+  if (!date) return '';
+  const d = typeof date === 'string' ? new Date(date) : date;
+  if (isNaN(d.getTime())) return '';
+  return format(d, 'yyyy-MM-dd');
+}
+
 export function calculateDevisTotals(lineItems: { quantity: number, unitPrice: number }[], tvaRate: number) {
   const totalHT = lineItems.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
   const tva = totalHT * tvaRate;

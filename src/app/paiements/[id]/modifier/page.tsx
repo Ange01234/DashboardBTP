@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     ChevronLeft,
     Save,
@@ -9,59 +9,79 @@ import {
     Wallet,
     HardHat
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
+import { formatCurrency, cn, formatDateForInput } from '@/lib/utils';
 import Link from 'next/link';
 import { useData } from '@/hooks/useData';
 import { PaymentMethod } from '@/types';
 
-export default function NewPaymentPage() {
+export default function EditPaymentPage() {
     const router = useRouter();
-    const { chantiers, addPayment } = useData();
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { id } = useParams();
+    const { payments, chantiers, updatePayment, loading } = useData();
+    const [isSaving, setIsSaving] = useState(false);
+
     const [formData, setFormData] = useState({
         chantierId: '',
         amount: '',
-        date: new Date().toISOString().split('T')[0],
+        date: '',
         method: 'Virement' as PaymentMethod
     });
 
+    useEffect(() => {
+        const payment = payments.find(p => p.id === id);
+        if (payment) {
+            setFormData({
+                chantierId: payment.chantierId,
+                amount: payment.amount.toString(),
+                date: formatDateForInput(payment.date),
+                method: payment.method
+            });
+        }
+    }, [payments, id]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
+        setIsSaving(true);
         try {
-            await addPayment({
+            await updatePayment(id as string, {
                 chantierId: formData.chantierId,
-                amount: parseFloat(formData.amount),
+                amount: parseFloat(formData.amount) || 0,
                 date: formData.date,
-                method: formData.method,
+                method: formData.method
             });
-            router.push('/paiements');
-        } catch (error) {
-            console.error(error);
+            router.push(`/paiements/${id}`);
+        } catch (err) {
+            console.error(err);
         } finally {
-            setIsSubmitting(false);
+            setIsSaving(false);
         }
     };
 
+    if (loading && !formData.chantierId) {
+        return <div className="p-20 text-center text-slate-500">Chargement...</div>;
+    }
+
     return (
-        <div className="space-y-8">
+        <div className="max-w-2xl mx-auto space-y-8">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                    <Link href="/paiements" className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500">
+                    <Link href={`/paiements/${id}`} className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500">
                         <ChevronLeft size={20} />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900">Nouvel Encaissement</h1>
-                        <p className="text-sm text-slate-500 mt-0.5">Enregistrer un acompte ou un paiement client.</p>
+                        <h1 className="text-2xl font-bold text-slate-900">Modifier le Paiement</h1>
+                        <p className="text-sm text-slate-500 mt-0.5">Mettez à jour les informations du règlement.</p>
                     </div>
                 </div>
                 <button
                     onClick={handleSubmit}
-                    className="btn-primary flex items-center space-x-2"
+                    disabled={isSaving}
+                    className="btn-primary flex items-center space-x-2 disabled:opacity-50"
                 >
-                    <Save size={20} />
-                    <span>{isSubmitting ? 'Enregistrement...' : 'Enregistrer'}</span>
+                    <Save size={18} />
+                    <span>{isSaving ? 'Enregistrement...' : 'Enregistrer'}</span>
                 </button>
             </div>
 
@@ -72,19 +92,19 @@ export default function NewPaymentPage() {
                         <h2>Détails du Paiement</h2>
                     </div>
 
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700">Chantier</label>
-                            <div className="relative mt-2">
+                            <div className="relative">
                                 <select
-                                    required
                                     className="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 transition-all bg-white"
                                     value={formData.chantierId}
                                     onChange={(e) => setFormData({ ...formData, chantierId: e.target.value })}
+                                    required
                                 >
                                     <option value="">Sélectionner un chantier...</option>
                                     {chantiers.map(c => (
-                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                        <option key={c.id} value={c.id}>{c.name} ({c.client})</option>
                                     ))}
                                 </select>
                                 <HardHat className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -93,24 +113,21 @@ export default function NewPaymentPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-slate-700">Montant (TTC)</label>
-                                <div className="relative mt-2">
+                                <label className="text-sm font-semibold text-slate-700">Montant (CFA)</label>
+                                <div className="relative">
                                     <input
                                         type="number"
-                                        step="0.01"
                                         required
-                                        placeholder="0.00"
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 transition-all bg-white"
                                         value={formData.amount}
                                         onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                                     />
                                     <Wallet className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">CFA</span>
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-slate-700">Date de paiement</label>
-                                <div className="relative mt-2">
+                                <label className="text-sm font-semibold text-slate-700">Date</label>
+                                <div className="relative">
                                     <input
                                         type="date"
                                         required
@@ -124,19 +141,19 @@ export default function NewPaymentPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-semibold text-slate-700">Mode de règlement</label>
-                            <div className="flex flex-wrap gap-3 mt-2">
+                            <label className="text-sm font-semibold text-slate-700">Méthode de Paiement</label>
+                            <div className="grid grid-cols-2 gap-3">
                                 {['Virement', 'Chèque', 'Espèces', 'Mobile Money'].map((m) => (
                                     <button
                                         key={m}
                                         type="button"
-                                        className={cn(
-                                            "px-6 py-2 rounded-full border text-sm font-bold transition-all",
-                                            formData.method === m
-                                                ? "bg-primary-600 border-primary-600 text-white shadow-lg shadow-primary-600/20"
-                                                : "bg-white border-slate-200 text-slate-600 hover:border-primary-200"
-                                        )}
                                         onClick={() => setFormData({ ...formData, method: m as PaymentMethod })}
+                                        className={cn(
+                                            "flex items-center justify-center p-3 rounded-xl border font-bold transition-all",
+                                            formData.method === m
+                                                ? "bg-primary-50 border-primary-200 text-primary-600"
+                                                : "bg-white border-slate-200 text-slate-400 hover:border-slate-300"
+                                        )}
                                     >
                                         {m}
                                     </button>
@@ -148,9 +165,4 @@ export default function NewPaymentPage() {
             </form>
         </div>
     );
-}
-
-// Minimal helper since utils.ts is already defined
-function cn(...inputs: any) {
-    return inputs.filter(Boolean).join(' ');
 }

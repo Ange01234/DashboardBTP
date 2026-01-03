@@ -17,7 +17,10 @@ export default function PaiementsPage() {
     const [search, setSearch] = useState('');
 
     const filteredPayments = payments.filter(p => {
-        const chantier = chantiers.find(c => c.id === p.chantierId);
+        const val = p.chantierId as any;
+        const chantierId = typeof val === 'object' ? val._id || val.id : val;
+        const chantier = chantiers.find(c => c.id === chantierId);
+
         return chantier?.name.toLowerCase().includes(search.toLowerCase()) ||
             p.method.toLowerCase().includes(search.toLowerCase());
     });
@@ -79,12 +82,13 @@ export default function PaiementsPage() {
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Chantier</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Méthode</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Montant</th>
-                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {filteredPayments.map((payment) => {
-                            const chantier = chantiers.find(c => c.id === payment.chantierId);
+                            const val = payment.chantierId as any;
+                            const chantierId = typeof val === 'object' ? val._id || val.id : val;
+                            const chantier = chantiers.find(c => c.id === chantierId);
                             return (
                                 <tr key={payment.id} className="hover:bg-slate-50/50 transition-colors group">
                                     <td className="px-6 py-4 text-sm text-slate-600">
@@ -105,11 +109,7 @@ export default function PaiementsPage() {
                                     <td className="px-6 py-4 font-bold text-emerald-600">
                                         +{formatCurrency(payment.amount)}
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button className="p-2 text-slate-400 hover:text-primary-600 transition-colors">
-                                            <History size={18} />
-                                        </button>
-                                    </td>
+                                    
                                 </tr>
                             );
                         })}

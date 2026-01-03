@@ -18,9 +18,20 @@ import Link from 'next/link';
 
 export default function ViewDevisPage() {
     const { id } = useParams();
-    const { devis: allDevis, chantiers } = useData();
+    const { devis: allDevis, chantiers, loading } = useData();
+
     const devis = allDevis.find(d => d.id === id);
-    const chantier = devis ? chantiers.find(c => c.id === devis.chantierId) : null;
+    const chantierId = devis?.chantierId;
+    const resolvedChantierId = typeof chantierId === 'object' ? (chantierId as any)._id || chantierId.id : chantierId;
+    const chantier = devis ? chantiers.find(c => c.id === resolvedChantierId) : null;
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            </div>
+        );
+    }
 
     if (!devis || !chantier) {
         return <div className="p-20 text-center">Devis non trouvé.</div>;
@@ -29,7 +40,7 @@ export default function ViewDevisPage() {
     const { totalHT, tva, totalTTC } = calculateDevisTotals(devis.lineItems, devis.tvaRate);
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8 pb-20">
+        <div className="space-y-8 pb-20">
             {/* Actions */}
             <div className="flex items-center justify-between">
                 <Link href="/devis" className="flex items-center text-slate-500 hover:text-primary-600 font-medium transition-colors group">
@@ -91,7 +102,6 @@ export default function ViewDevisPage() {
                             <p className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-200 pb-2">Destiné au Chantier</p>
                             <div className="p-4 bg-white rounded-2xl border border-slate-100">
                                 <p className="font-bold text-slate-900">{chantier.name}</p>
-                                <p className="text-sm text-slate-500 mt-1">ID Projet: {chantier.id}</p>
                             </div>
                         </div>
                     </div>
@@ -135,7 +145,7 @@ export default function ViewDevisPage() {
                             </div>
                             <div className="flex justify-between items-end pt-2">
                                 <span className="text-lg font-black text-slate-900">NET À PAYER TTC</span>
-                                <span className="text-2xl font-black text-primary-600">{formatCurrency(totalTTC)}</span>
+                                <span className="text-xl font-black text-primary-600">{formatCurrency(totalTTC)}</span>
                             </div>
                         </div>
                     </div>

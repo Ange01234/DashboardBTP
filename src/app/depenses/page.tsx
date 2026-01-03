@@ -8,7 +8,8 @@ import {
     Tag,
     ArrowRight,
     ExternalLink,
-    ShoppingBag
+    ShoppingBag,
+    Eye
 } from 'lucide-react';
 import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
@@ -19,7 +20,9 @@ export default function DepensesPage() {
     const [search, setSearch] = useState('');
 
     const filteredExpenses = expenses.filter(e => {
-        const chantier = chantiers.find(c => c.id === e.chantierId);
+        const val = e.chantierId as any;
+        const chantierId = typeof val === 'object' ? val._id || val.id : val;
+        const chantier = chantiers.find(c => c.id === chantierId);
         return chantier?.name.toLowerCase().includes(search.toLowerCase()) ||
             e.provider.toLowerCase().includes(search.toLowerCase()) ||
             e.type.toLowerCase().includes(search.toLowerCase());
@@ -49,11 +52,14 @@ export default function DepensesPage() {
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Fournisseur</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Date</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Montant</th>
+                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {filteredExpenses.map((expense) => {
-                            const chantier = chantiers.find(c => c.id === expense.chantierId);
+                            const val = expense.chantierId as any;
+                            const chantierId = typeof val === 'object' ? val._id || val.id : val;
+                            const chantier = chantiers.find(c => c.id === chantierId);
                             return (
                                 <tr key={expense.id} className="hover:bg-slate-50/50 transition-colors group">
                                     <td className="px-6 py-4">
@@ -86,7 +92,11 @@ export default function DepensesPage() {
                                     <td className="px-6 py-4 font-bold text-rose-600">
                                         {formatCurrency(expense.amount)}
                                     </td>
-
+                                    <td className="px-6 py-4 text-right">
+                                        <Link href={`/depenses/${expense.id}`} className="p-2 text-slate-400 hover:text-primary-600 transition-colors inline-block">
+                                            <Eye size={18} />
+                                        </Link>
+                                    </td>
                                 </tr>
                             );
                         })}

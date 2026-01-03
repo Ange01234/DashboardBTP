@@ -117,10 +117,6 @@ export default function Sidebar() {
                                 </p>
                             </div>
                         )}
-                        <button className="sidebar-link w-full">
-                            <Settings size={20} />
-                            <span>Réglages</span>
-                        </button>
                         <button
                             onClick={logout}
                             className="sidebar-link w-full text-rose-600 hover:bg-rose-50 hover:text-rose-700"

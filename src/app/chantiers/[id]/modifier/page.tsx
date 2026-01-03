@@ -12,11 +12,14 @@ import {
 } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { MOCK_CHANTIERS } from '@/lib/mockData';
+import { useData } from '@/hooks/useData';
+import { formatDateForInput } from '@/lib/utils';
 
 export default function EditChantierPage() {
     const router = useRouter();
     const { id } = useParams();
+    const { chantiers, updateChantier, loading } = useData();
+    const [isSaving, setIsSaving] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         client: '',
@@ -28,27 +31,43 @@ export default function EditChantierPage() {
     });
 
     useEffect(() => {
-        const chantier = MOCK_CHANTIERS.find(c => c.id === id);
+        const chantier = chantiers.find(c => c.id === id);
         if (chantier) {
             setFormData({
                 name: chantier.name,
                 client: chantier.client,
                 location: chantier.location,
-                startDate: chantier.startDate,
-                endDate: chantier.endDate || '',
+                startDate: formatDateForInput(chantier.startDate),
+                endDate: formatDateForInput(chantier.endDate),
                 budget: chantier.budget.toString(),
                 status: chantier.status
             });
         }
-    }, [id]);
+    }, [chantiers, id]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        router.push(`/chantiers/${id}`);
+        setIsSaving(true);
+        try {
+            await updateChantier(id as string, {
+                ...formData,
+                budget: parseFloat(formData.budget) || 0,
+                status: formData.status as any
+            });
+            router.push(`/chantiers/${id}`);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
+    if (loading && !formData.name) {
+        return <div className="p-20 text-center">Chargement...</div>;
+    }
+
     return (
-        <div className="max-w-3xl mx-auto space-y-8">
+        <div className="space-y-8">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -62,10 +81,11 @@ export default function EditChantierPage() {
                 </div>
                 <button
                     onClick={handleSubmit}
-                    className="btn-primary flex items-center space-x-2"
+                    disabled={isSaving}
+                    className="btn-primary flex items-center space-x-2 disabled:opacity-50"
                 >
                     <Save size={20} />
-                    <span>Enregistrer les modifications</span>
+                    <span>{isSaving ? 'Enregistrement...' : 'Enregistrer les modifications'}</span>
                 </button>
             </div>
 

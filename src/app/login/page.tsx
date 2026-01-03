@@ -62,6 +62,7 @@ export default function LoginPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="w-full bg-slate-50 border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 placeholder:text-slate-400 outline-none transition-all"
                                     placeholder="nom@entreprise.fr"
+                                    
                                     required
                                 />
                             </div>
@@ -79,6 +80,7 @@ export default function LoginPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="w-full bg-slate-50 border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-11 text-slate-900 placeholder:text-slate-400 outline-none transition-all"
                                     placeholder="••••••••"
+                                    
                                     required
                                 />
                                 <button
@@ -91,7 +93,7 @@ export default function LoginPage() {
                             </div>
                             <div className="flex justify-end">
                                 <button type="button" className="text-xs font-semibold text-primary-600 hover:text-primary-700">
-                                    Mot de passe oublié ?
+                                    Mot de passe 
                                 </button>
                             </div>
                         </div>
