@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isDemoMode, setIsDemoMode] = useState(false);
-    const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+    const [user, setUser] = useState<{ name: string; email: string; id: string } | null>(null);
     const router = useRouter();
     const pathname = usePathname();
 
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem('btp_user');
         setIsDemoMode(true);
         setIsAuthenticated(false);
-        setUser({ name: 'Utilisateur Démo', email: 'demo@btpdash.com' });
+        setUser({ name: 'Utilisateur Démo', email: 'demo@btpdash.com', id: 'demo-user' });
         router.push('/');
     };
 

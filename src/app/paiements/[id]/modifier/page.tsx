@@ -14,6 +14,7 @@ import { formatCurrency, cn, formatDateForInput } from '@/lib/utils';
 import Link from 'next/link';
 import { useData } from '@/hooks/useData';
 import { PaymentMethod } from '@/types';
+import LoadingState from '@/components/ui/LoadingState';
 
 export default function EditPaymentPage() {
     const router = useRouter();
@@ -59,7 +60,7 @@ export default function EditPaymentPage() {
     };
 
     if (loading && !formData.chantierId) {
-        return <div className="p-20 text-center text-slate-500">Chargement...</div>;
+        return <LoadingState />;
     }
 
     return (

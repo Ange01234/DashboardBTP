@@ -1,5 +1,5 @@
 export type ChantierStatus = "En cours" | "Terminé" | "Suspendu";
-export type DevisStatus = "Brouillon" | "Envoyé" ;
+export type DevisStatus = "Brouillon" | "Envoyé" | "Accepté" | "Refusé";
 export type ExpenseType = "matériaux" | "main-d’œuvre" | "transport" | "autre";
 export type PaymentMethod = "Virement" | "Chèque" | "Espèces" | "Mobile Money";
 

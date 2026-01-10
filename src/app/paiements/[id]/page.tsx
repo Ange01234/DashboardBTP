@@ -15,12 +15,17 @@ import {
 import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import Link from 'next/link';
+import LoadingState from '@/components/ui/LoadingState';
 
 export default function ViewPaymentPage() {
     const { id } = useParams();
-    const { payments, chantiers } = useData();
+    const { payments, chantiers, loading } = useData();
     const payment = payments.find(p => p.id === id);
     const chantier = payment ? chantiers.find(c => c.id === payment.chantierId) : null;
+
+    if (loading) {
+        return <LoadingState />;
+    }
 
     if (!payment) {
         return <div className="p-20 text-center text-slate-500">Paiement non trouvé.</div>;
