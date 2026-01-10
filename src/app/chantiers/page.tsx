@@ -16,10 +16,15 @@ import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChantierStatus, Chantier } from '@/types';
+import LoadingState from '@/components/ui/LoadingState';
 
 export default function ChantiersPage() {
     const router = useRouter();
-    const { chantiers } = useData();
+    const { chantiers, loading } = useData();
+
+    if (loading) {
+        return <LoadingState />;
+    }
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<ChantierStatus | 'Tous'>('Tous');
 

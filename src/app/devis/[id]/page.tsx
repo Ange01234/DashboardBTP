@@ -15,6 +15,7 @@ import {
 import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, calculateDevisTotals, cn } from '@/lib/utils';
 import Link from 'next/link';
+import LoadingState from '@/components/ui/LoadingState';
 
 export default function ViewDevisPage() {
     const { id } = useParams();
@@ -26,11 +27,7 @@ export default function ViewDevisPage() {
     const chantier = devis ? chantiers.find(c => c.id === resolvedChantierId) : null;
 
     if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            </div>
-        );
+        return <LoadingState />;
     }
 
     if (!devis || !chantier) {
@@ -38,6 +35,9 @@ export default function ViewDevisPage() {
     }
 
     const { totalHT, tva, totalTTC } = calculateDevisTotals(devis.lineItems, devis.tvaRate);
+
+    // Helper to safely check status type if it doesn't match strict enum
+    const status = devis.status as string;
 
     return (
         <div className="space-y-8 pb-20">
@@ -76,9 +76,9 @@ export default function ViewDevisPage() {
                         <div className="text-right space-y-2">
                             <span className={cn(
                                 "inline-flex items-center px-4 py-1.5 rounded-full text-sm font-black uppercase tracking-widest",
-                                devis.status === 'Accepté' ? "bg-emerald-100 text-emerald-700" :
-                                    devis.status === 'Brouillon' ? "bg-slate-200 text-slate-600" :
-                                        devis.status === 'Envoyé' ? "bg-blue-100 text-blue-700" :
+                                status === 'Accepté' ? "bg-emerald-100 text-emerald-700" :
+                                    status === 'Brouillon' ? "bg-slate-200 text-slate-600" :
+                                        status === 'Envoyé' ? "bg-blue-100 text-blue-700" :
                                             "bg-rose-100 text-rose-700"
                             )}>
                                 {devis.status}

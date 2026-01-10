@@ -12,8 +12,14 @@ import { useData } from '@/hooks/useData';
 import { formatCurrency, cn } from '@/lib/utils';
 import Link from 'next/link';
 
+import LoadingState from '@/components/ui/LoadingState';
+
 export default function Dashboard() {
-  const { chantiers, expenses, payments } = useData();
+  const { chantiers, expenses, payments, loading } = useData();
+
+  if (loading) {
+    return <LoadingState />;
+  }
 
   // Aggregate data for stats
   const totalBudget = chantiers.reduce((acc, c) => acc + c.budget, 0);
@@ -136,7 +142,7 @@ export default function Dashboard() {
                 Pensez à enregistrer vos dépenses dès réception des factures pour un suivi en temps réel.
               </p>
             </div>
-            <CheckCircle2 className="absolute -bottom-4 -right-4 w-20 h-20 text-primary-500/30 -rotate-12" />
+            <CheckCircle2 className="absolute -bottom-8 -right-4 w-20 h-20 text-primary-500/30 -rotate-12" />
           </div>
         </div>
       </div>

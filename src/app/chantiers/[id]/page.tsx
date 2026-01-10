@@ -19,10 +19,16 @@ import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, calculateDevisTotals, cn } from '@/lib/utils';
 import Link from 'next/link';
 
+import LoadingState from '@/components/ui/LoadingState';
+
 export default function ChantierDetailPage() {
     const { id } = useParams();
-    const { chantiers, devis, payments, expenses } = useData();
+    const { chantiers, devis, payments, expenses, loading } = useData();
     const chantier = chantiers.find(c => c.id === id);
+
+    if (loading) {
+        return <LoadingState />;
+    }
 
     if (!chantier) {
         return <div className="p-20 text-center">Chantier non trouvé.</div>;
@@ -189,9 +195,7 @@ export default function ChantierDetailPage() {
                                     <p className="text-xs text-slate-500">Client Principal</p>
                                 </div>
                             </div>
-                            <div className="flex items-center space-x-3 p-3 rounded-2xl border border-slate-100 italic text-slate-400 text-xs">
-                                Aucun autre contact enregistré.
-                            </div>
+
                         </div>
                     </div>
 

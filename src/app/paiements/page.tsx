@@ -11,9 +11,14 @@ import {
 import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import LoadingState from '@/components/ui/LoadingState';
 
 export default function PaiementsPage() {
-    const { payments, chantiers } = useData();
+    const { payments, chantiers, loading } = useData();
+
+    if (loading) {
+        return <LoadingState />;
+    }
     const [search, setSearch] = useState('');
 
     const filteredPayments = payments.filter(p => {
@@ -109,7 +114,7 @@ export default function PaiementsPage() {
                                     <td className="px-6 py-4 font-bold text-emerald-600">
                                         +{formatCurrency(payment.amount)}
                                     </td>
-                                    
+
                                 </tr>
                             );
                         })}

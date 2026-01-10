@@ -14,9 +14,14 @@ import {
 import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import Link from 'next/link';
+import LoadingState from '@/components/ui/LoadingState';
 
 export default function DepensesPage() {
-    const { expenses, chantiers } = useData();
+    const { expenses, chantiers, loading } = useData();
+
+    if (loading) {
+        return <LoadingState />;
+    }
     const [search, setSearch] = useState('');
 
     const filteredExpenses = expenses.filter(e => {

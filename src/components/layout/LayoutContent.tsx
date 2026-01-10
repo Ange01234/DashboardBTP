@@ -15,7 +15,7 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
         <div className="flex min-h-screen">
             {showSidebar && <Sidebar />}
             <main className={`flex-1 ${showSidebar ? 'lg:ml-72' : ''} bg-slate-50 min-h-screen`}>
-                <div className={showSidebar ? "pt-16 p-4 md:p-8 lg:p-12" : ""}>
+                <div className={showSidebar ? "pt-16 p-4 pb-28 md:p-8 md:pb-28 lg:p-12 lg:pb-12" : ""}>
                     {children}
                 </div>
             </main>

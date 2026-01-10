@@ -14,6 +14,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useData } from '@/hooks/useData';
 import { formatDateForInput } from '@/lib/utils';
+import LoadingState from '@/components/ui/LoadingState';
 
 export default function EditChantierPage() {
     const router = useRouter();
@@ -63,7 +64,7 @@ export default function EditChantierPage() {
     };
 
     if (loading && !formData.name) {
-        return <div className="p-20 text-center">Chargement...</div>;
+        return <LoadingState />;
     }
 
     return (

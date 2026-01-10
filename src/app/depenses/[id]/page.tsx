@@ -16,12 +16,17 @@ import {
 import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import Link from 'next/link';
+import LoadingState from '@/components/ui/LoadingState';
 
 export default function ViewExpensePage() {
     const { id } = useParams();
-    const { expenses, chantiers } = useData();
+    const { expenses, chantiers, loading } = useData();
     const expense = expenses.find(e => e.id === id);
     const chantier = expense ? chantiers.find(c => c.id === expense.chantierId) : null;
+
+    if (loading) {
+        return <LoadingState />;
+    }
 
     if (!expense) {
         return <div className="p-20 text-center text-slate-500">Dépense non trouvée.</div>;

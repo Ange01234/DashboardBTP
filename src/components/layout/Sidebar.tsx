@@ -29,20 +29,13 @@ const navigation = [
 
 export default function Sidebar() {
     const pathname = usePathname();
-    const { logout, isDemoMode } = useAuth();
-    const [isOpen, setIsOpen] = useState(false);
+    const { logout, isDemoMode, user } = useAuth();
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
 
     return (
         <>
             {/* Mobile Top Bar */}
-            <div className="fixed top-0 left-0 right-0 z-50 h-16 glass-strong lg:hidden flex items-center justify-between px-4 border-b border-slate-200/50">
-                <button
-                    className="p-2.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-600 active:scale-95"
-                    onClick={() => setIsOpen(!isOpen)}
-                >
-                    {isOpen ? <X size={22} /> : <Menu size={22} />}
-                </button>
-
+            {/* <div className="fixed top-0 left-0 right-0 z-50 h-16 glass-strong lg:hidden flex items-center justify-between px-4 border-b border-slate-200/50">
                 <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-primary-600/10 rounded-lg flex items-center justify-center">
                         <HardHat size={18} className="text-primary-600" />
@@ -52,18 +45,50 @@ export default function Sidebar() {
                     </span>
                 </div>
 
-                <button className="p-1 rounded-full border-2 border-primary-100 p-0.5 hover:border-primary-300 transition-all active:scale-95">
-                    <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
-                        <UserCircle size={28} className="text-slate-400" />
-                    </div>
-                </button>
-            </div>
+                <div className="relative">
+                    <button
+                        className="p-1 rounded-full border-2 border-primary-100 p-0.5 hover:border-primary-300 transition-all active:scale-95"
+                        onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    >
+                        <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
+                            <UserCircle size={28} className="text-slate-400" />
+                        </div>
+                    </button>
 
-            {/* Sidebar */}
-            <aside className={cn(
-                "fixed inset-y-0 left-0 z-40 w-72 bg-slate-50 border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0",
-                isOpen ? "translate-x-0" : "-translate-x-full"
-            )}>
+                    <AnimatePresence>
+                        {isProfileOpen && (
+                            <>
+                                <div
+                                    className="fixed inset-0 z-40"
+                                    onClick={() => setIsProfileOpen(false)}
+                                />
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                    className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 p-2 z-50"
+                                >
+                                    <div className="px-3 py-2 border-b border-slate-50 mb-1">
+                                        <p className="text-sm font-bold text-slate-900 truncate">
+                                            {user?.name || 'Utilisateur'}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={logout}
+                                        className="w-full flex items-center space-x-2 px-3 py-2 text-rose-600 hover:bg-rose-50 rounded-lg text-sm font-medium transition-colors"
+                                    >
+                                        <LogOut size={16} />
+                                        <span>Déconnexion</span>
+                                    </button>
+                                </motion.div>
+                            </>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </div> */}
+
+            {/* Sidebar (Desktop Only) */}
+            <aside className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-72 bg-slate-50 border-r border-slate-200 flex-col">
                 <div className="flex flex-col h-full h-screen">
                     {/* Logo */}
                     <div className="p-8">
@@ -89,7 +114,6 @@ export default function Sidebar() {
                                         "sidebar-link",
                                         isActive && "active"
                                     )}
-                                    onClick={() => setIsOpen(false)}
                                 >
                                     <item.icon size={20} />
                                     <span>{item.name}</span>
@@ -117,6 +141,21 @@ export default function Sidebar() {
                                 </p>
                             </div>
                         )}
+
+                        <div className="flex items-center space-x-3 px-2 py-2 mb-2 bg-slate-100 rounded-xl">
+                            <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                <UserCircle size={20} className="text-slate-400" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-slate-900 truncate">
+                                    {user?.name || 'Utilisateur'}
+                                </p>
+                                <p className="text-[10px] text-slate-500 truncate">
+                                    {user?.email || ''}
+                                </p>
+                            </div>
+                        </div>
+
                         <button
                             onClick={logout}
                             className="sidebar-link w-full text-rose-600 hover:bg-rose-50 hover:text-rose-700"
@@ -128,18 +167,33 @@ export default function Sidebar() {
                 </div>
             </aside>
 
-            {/* Backdrop for mobile */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setIsOpen(false)}
-                        className="fixed inset-0 z-30 bg-slate-900/20 backdrop-blur-sm lg:hidden"
-                    />
-                )}
-            </AnimatePresence>
+            {/* Bottom Navigation (Mobile Only) */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 h-20 glass-strong lg:hidden border-t border-slate-200/50 pb-safe">
+                <nav className="h-full flex items-center justify-around px-2">
+                    {navigation.map((item) => {
+                        const isActive = pathname === item.href;
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={cn(
+                                    "flex flex-col items-center justify-center space-y-1 p-2 rounded-xl transition-all duration-300 w-16 relative",
+                                    isActive ? "text-primary-600" : "text-slate-400 hover:text-slate-600"
+                                )}
+                            >
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="bottom-nav-active"
+                                        className="absolute inset-0 bg-primary-50 rounded-xl -z-10"
+                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                    />
+                                )}
+                                <item.icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+                            </Link>
+                        );
+                    })}
+                </nav>
+            </div>
         </>
     );
 }

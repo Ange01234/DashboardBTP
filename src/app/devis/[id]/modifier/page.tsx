@@ -14,6 +14,7 @@ import { formatCurrency, calculateDevisTotals, cn, formatDateForInput } from '@/
 import Link from 'next/link';
 import { LineItem } from '@/types';
 import { useRouter, useParams } from 'next/navigation';
+import LoadingState from '@/components/ui/LoadingState';
 
 export default function EditDevisPage() {
     const router = useRouter();
@@ -71,6 +72,10 @@ export default function EditDevisPage() {
     };
 
     const totals = calculateDevisTotals(lineItems, tvaRate);
+
+    if (loading && !chantierId) {
+        return <LoadingState />;
+    }
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 pb-20">

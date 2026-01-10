@@ -14,9 +14,14 @@ import {
 import { useData } from '@/hooks/useData';
 import { formatCurrency, calculateDevisTotals, cn } from '@/lib/utils';
 import Link from 'next/link';
+import LoadingState from '@/components/ui/LoadingState';
 
 export default function DevisPage() {
-    const { devis, chantiers } = useData();
+    const { devis, chantiers, loading } = useData();
+
+    if (loading) {
+        return <LoadingState />;
+    }
     const [search, setSearch] = useState('');
 
     const filteredDevis = devis.filter(d => {
@@ -101,9 +106,9 @@ export default function DevisPage() {
                                     <td className="px-6 py-4">
                                         <span className={cn(
                                             "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                                                devis.status === 'Brouillon' ? "bg-slate-50 text-slate-600" :
-                                                    devis.status === 'Envoyé' ? "bg-blue-50 text-blue-700" :
-                                                        "bg-rose-50 text-rose-700"
+                                            devis.status === 'Brouillon' ? "bg-slate-50 text-slate-600" :
+                                                devis.status === 'Envoyé' ? "bg-blue-50 text-blue-700" :
+                                                    "bg-rose-50 text-rose-700"
                                         )}>
                                             {devis.status}
                                         </span>
