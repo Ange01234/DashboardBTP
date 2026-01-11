@@ -15,11 +15,11 @@ import LoadingState from '@/components/ui/LoadingState';
 
 export default function PaiementsPage() {
     const { payments, chantiers, loading } = useData();
+    const [search, setSearch] = useState('');
 
     if (loading) {
         return <LoadingState />;
     }
-    const [search, setSearch] = useState('');
 
     const filteredPayments = payments.filter(p => {
         const val = p.chantierId as any;

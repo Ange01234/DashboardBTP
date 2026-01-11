@@ -21,12 +21,12 @@ import LoadingState from '@/components/ui/LoadingState';
 export default function ChantiersPage() {
     const router = useRouter();
     const { chantiers, loading } = useData();
+    const [search, setSearch] = useState('');
+    const [statusFilter, setStatusFilter] = useState<ChantierStatus | 'Tous'>('Tous');
 
     if (loading) {
         return <LoadingState />;
     }
-    const [search, setSearch] = useState('');
-    const [statusFilter, setStatusFilter] = useState<ChantierStatus | 'Tous'>('Tous');
 
     const filteredChantiers = chantiers.filter((c: Chantier) => {
         const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) ||

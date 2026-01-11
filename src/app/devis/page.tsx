@@ -18,11 +18,11 @@ import LoadingState from '@/components/ui/LoadingState';
 
 export default function DevisPage() {
     const { devis, chantiers, loading } = useData();
+    const [search, setSearch] = useState('');
 
     if (loading) {
         return <LoadingState />;
     }
-    const [search, setSearch] = useState('');
 
     const filteredDevis = devis.filter(d => {
         // Handle both populated object and string ID

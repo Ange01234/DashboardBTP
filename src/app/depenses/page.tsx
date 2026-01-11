@@ -18,11 +18,11 @@ import LoadingState from '@/components/ui/LoadingState';
 
 export default function DepensesPage() {
     const { expenses, chantiers, loading } = useData();
+    const [search, setSearch] = useState('');
 
     if (loading) {
         return <LoadingState />;
     }
-    const [search, setSearch] = useState('');
 
     const filteredExpenses = expenses.filter(e => {
         const val = e.chantierId as any;
