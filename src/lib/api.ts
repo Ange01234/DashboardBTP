@@ -1,4 +1,4 @@
-const API_URL = process.env.API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 class ApiError extends Error {
     constructor(public status: number, message: string) {
@@ -33,7 +33,9 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     }
 
     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await response.json().catch(() => ({
+            message: response.statusText || 'An error occurred'
+        }));
         throw new ApiError(response.status, errorData.message || 'An error occurred');
     }
 
