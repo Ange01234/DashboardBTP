@@ -27,14 +27,7 @@ export default function StatCard({
                 <div className="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center">
                     <Icon className="text-primary-600" size={24} />
                 </div>
-                {trend && (
-                    <div className={cn(
-                        "text-xs font-semibold px-2 py-1 rounded-full",
-                        trend.isPositive ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
-                    )}>
-                        {trend.isPositive ? '+' : '-'}{trend.value}%
-                    </div>
-                )}
+                
             </div>
             <div>
                 <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
