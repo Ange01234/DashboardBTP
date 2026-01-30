@@ -13,10 +13,11 @@ export interface LineItem {
 export interface Devis {
   id: string;
   chantierId: string | Chantier;
+  name?: string;
   date: string;
   status: DevisStatus;
   lineItems: LineItem[];
-  tvaRate: number; // e.g., 0.20
+  tvaRate?: number; // e.g., 0.20
 }
 
 export interface Payment {

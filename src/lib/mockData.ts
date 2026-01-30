@@ -35,6 +35,7 @@ export const MOCK_DEVIS: Devis[] = [
   {
     id: 'd1',
     chantierId: '1',
+    name: 'Devis Travaux 2025',
     date: '2025-01-10',
     status: 'Accepté',
     tvaRate: 0.18,

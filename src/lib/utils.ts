@@ -26,7 +26,7 @@ export function formatDateForInput(date: string | Date | undefined) {
   return format(d, 'yyyy-MM-dd');
 }
 
-export function calculateDevisTotals(lineItems: { quantity: number, unitPrice: number }[], tvaRate: number) {
+export function calculateDevisTotals(lineItems: { quantity: number, unitPrice: number }[], tvaRate: number = 0) {
   const totalHT = lineItems.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
   const tva = totalHT * tvaRate;
   const totalTTC = totalHT + tva;

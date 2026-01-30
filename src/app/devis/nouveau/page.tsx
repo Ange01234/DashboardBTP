@@ -19,6 +19,7 @@ export default function NewDevisPage() {
     const router = useRouter();
     const { chantiers, addDevis } = useData();
     const [chantierId, setChantierId] = useState('');
+    const [name, setName] = useState('');
     const [lineItems, setLineItems] = useState<Omit<LineItem, 'id'>[]>([{
         designation: '',
         quantity: 1,
@@ -46,6 +47,7 @@ export default function NewDevisPage() {
         try {
             await addDevis({
                 chantierId,
+                name,
                 lineItems: lineItems.map((item, idx) => ({ ...item, id: idx.toString() })),
                 tvaRate: 0.18, // Default TVA, could be made dynamic later
                 status: 'Brouillon',
@@ -87,13 +89,23 @@ export default function NewDevisPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-8">
-                {/* Selection Chantier */}
+                {/* Informations Générales */}
                 <section className="glass p-8 rounded-2xl space-y-6">
                     <div className="flex items-center space-x-2 text-primary-600 font-bold">
                         <HardHat size={20} />
-                        <h2>Lien au Chantier</h2>
+                        <h2>Informations Générales</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">Nom du Devis (Optionnel)</label>
+                            <input
+                                type="text"
+                                placeholder="ex: Devis Travaux 2025"
+                                className="w-full p-3 rounded-xl border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 transition-all bg-white mt-2"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700">Sélectionner le chantier</label>
                             <select

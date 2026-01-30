@@ -42,7 +42,7 @@ export default function ChantierDetailPage() {
 
     const chantierDevis = devis.filter(d => {
         const dId = typeof d.chantierId === 'object' ? (d.chantierId as any)._id || (d.chantierId as any).id : d.chantierId;
-        return String(dId) === String(id);
+        return String(dId) === String(id) && d.status === 'Accepté';
     });
     const chantierPayments = payments.filter(p => {
         const pId = typeof p.chantierId === 'object' ? (p.chantierId as any)._id || (p.chantierId as any).id : p.chantierId;

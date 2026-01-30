@@ -26,6 +26,7 @@ export default function EditDevisPage() {
     const [tvaRate, setTvaRate] = useState(0.18);
     const [status, setStatus] = useState<any>('Brouillon');
     const [date, setDate] = useState('');
+    const [name, setName] = useState('');
 
     useEffect(() => {
         const devis = allDevis.find(d => d.id === id);
@@ -33,9 +34,10 @@ export default function EditDevisPage() {
             const cId = devis.chantierId;
             setChantierId(typeof cId === 'object' ? (cId as any)._id || cId.id : cId);
             setLineItems(devis.lineItems.map(({ id, ...rest }) => rest));
-            setTvaRate(devis.tvaRate);
+            setTvaRate(devis.tvaRate || 0.18);
             setStatus(devis.status);
             setDate(formatDateForInput(devis.date));
+            setName(devis.name || '');
         }
     }, [allDevis, id]);
 
@@ -61,7 +63,8 @@ export default function EditDevisPage() {
                 lineItems: lineItems.map((item, idx) => ({ ...item, id: idx.toString() })),
                 tvaRate,
                 status,
-                date
+                date,
+                name
             });
             router.push(`/devis/${id}`);
         } catch (err) {
@@ -102,7 +105,17 @@ export default function EditDevisPage() {
 
             <div className="grid grid-cols-1 gap-8">
                 {/* Settings */}
-                <section className="glass p-8 rounded-2xl grid grid-cols-1 md:grid-cols-3 gap-6">
+                <section className="glass p-8 rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-700">Nom du Devis (Optionnel)</label>
+                        <input
+                            type="text"
+                            placeholder="ex: Devis Travaux 2025"
+                            className="w-full p-3 rounded-xl border-slate-200 outline-none focus:ring-2 focus:ring-primary-600 transition-all bg-white"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
                     <div className="space-y-2">
                         <label className="text-sm font-semibold text-slate-700">Chantier</label>
                         <select
@@ -123,7 +136,7 @@ export default function EditDevisPage() {
                             onChange={(e) => setStatus(e.target.value)}
                         >
                             <option value="Brouillon">Brouillon</option>
-                            <option value="Envoyé">Envoyé</option>
+                            <option value="Accepté">Accepté</option>
                         </select>
                     </div>
                     <div className="space-y-2">

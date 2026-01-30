@@ -16,6 +16,7 @@ import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate, calculateDevisTotals, cn } from '@/lib/utils';
 import Link from 'next/link';
 import LoadingState from '@/components/ui/LoadingState';
+import { generateDevisPDF } from '@/lib/pdfGenerator';
 
 export default function ViewDevisPage() {
     const { id } = useParams();
@@ -38,7 +39,6 @@ export default function ViewDevisPage() {
 
     // Helper to safely check status type if it doesn't match strict enum
     const status = devis.status as string;
-
     return (
         <div className="space-y-8 pb-20">
             {/* Actions */}
@@ -48,7 +48,10 @@ export default function ViewDevisPage() {
                     <span>Retour aux devis</span>
                 </Link>
                 <div className="flex space-x-3">
-                    <button className="px-4 py-2 border border-slate-200 rounded-xl text-slate-600 font-bold hover:bg-white transition-all flex items-center space-x-2">
+                    <button
+                        onClick={() => generateDevisPDF(devis, chantier)}
+                        className="px-4 py-2 border border-slate-200 rounded-xl text-slate-600 font-bold hover:bg-white transition-all flex items-center space-x-2"
+                    >
                         <Download size={18} />
                         <span>PDF</span>
                     </button>
@@ -69,8 +72,7 @@ export default function ViewDevisPage() {
                                 <HardHat size={32} />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase italic">DEVIS PRO</h1>
-                                <p className="text-slate-500 font-bold">Réf: #{devis.id.toUpperCase()}</p>
+                                <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase italic">{devis.name || "DEVIS PRO"}</h1>
                             </div>
                         </div>
                         <div className="text-right space-y-2">
@@ -140,7 +142,7 @@ export default function ViewDevisPage() {
                                 <span className="text-lg">{formatCurrency(totalHT)}</span>
                             </div>
                             <div className="flex justify-between text-slate-500 font-bold pb-4 border-b border-slate-200">
-                                <span className="text-sm">TVA ({(devis.tvaRate * 100).toFixed(0)}%)</span>
+                                <span className="text-sm">TVA ({((devis.tvaRate || 0) * 100).toFixed(0)}%)</span>
                                 <span className="text-lg">{formatCurrency(tva)}</span>
                             </div>
                             <div className="flex justify-between items-end pt-2">

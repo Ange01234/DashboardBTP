@@ -15,6 +15,7 @@ import { useData } from '@/hooks/useData';
 import { formatCurrency, calculateDevisTotals, cn } from '@/lib/utils';
 import Link from 'next/link';
 import LoadingState from '@/components/ui/LoadingState';
+import { generateDevisPDF } from '@/lib/pdfGenerator';
 
 export default function DevisPage() {
     const { devis, chantiers, loading } = useData();
@@ -30,7 +31,8 @@ export default function DevisPage() {
         const chantier = chantiers.find(c => c.id === chantierIdStr);
 
         return chantier?.name.toLowerCase().includes(search.toLowerCase()) ||
-            d.id.toLowerCase().includes(search.toLowerCase());
+            d.id.toLowerCase().includes(search.toLowerCase()) ||
+            d.name?.toLowerCase().includes(search.toLowerCase());
     });
 
     return (
@@ -70,7 +72,7 @@ export default function DevisPage() {
                 <table className="w-full text-left">
                     <thead className="bg-slate-50/50 border-b border-slate-100">
                         <tr>
-                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Référence</th>
+                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Intitulé</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Chantier</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Montant TTC</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Statut</th>
@@ -91,7 +93,7 @@ export default function DevisPage() {
                                             <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center text-primary-600">
                                                 <FileText size={16} />
                                             </div>
-                                            <span className="font-bold text-slate-900 uppercase">#{index + 1}</span>
+                                            <span className="font-bold text-slate-900 uppercase">{devis.name || index + 1}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
