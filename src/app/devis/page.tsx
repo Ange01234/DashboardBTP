@@ -123,9 +123,7 @@ export default function DevisPage() {
                                             <Link href={`/devis/${devis.id}/modifier`} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all" title="Modifier">
                                                 <Edit3 size={18} />
                                             </Link>
-                                            <button className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all" title="Télécharger PDF">
-                                                <Download size={18} />
-                                            </button>
+                                            
                                         </div>
                                     </td>
                                 </tr>
