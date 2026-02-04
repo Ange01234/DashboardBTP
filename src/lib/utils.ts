@@ -9,9 +9,11 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatCurrency(amount: number) {
   return new Intl.NumberFormat('fr-FR', {
-    useGrouping: false,
+    useGrouping: true,
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(amount)
+    .replace(/[^\d]/g, ' ') // remplace tout séparateur non-numérique par un espace
+    .trim() + ' FCFA';
 }
 
 // export function formatCurrency(amount: number) {

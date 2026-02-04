@@ -85,7 +85,7 @@ export const generateChantierPDF = (
         ['Total Devis TTC', formatCurrency(totalDevis)],
         ['Total Encaissé', formatCurrency(totalPaid)],
         ['Total Dépenses', formatCurrency(totalExpenses)],
-        ['Bénéfice Net', formatCurrency(netProfit)],
+        ['Solde/Bénéfice Net', formatCurrency(netProfit)],
         ['Marge', `${totalPaid > 0 ? ((netProfit / totalPaid) * 100).toFixed(2) : 0}%`]
     ];
 
