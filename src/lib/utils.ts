@@ -9,11 +9,18 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatCurrency(amount: number) {
   return new Intl.NumberFormat('fr-FR', {
-    style: 'decimal',
-    minimumFractionDigits: 0,
+    useGrouping: false,
     maximumFractionDigits: 0,
-  }).format(amount) + ' FCFA';
+  }).format(amount);
 }
+
+// export function formatCurrency(amount: number) {
+//   return new Intl.NumberFormat('fr-FR', {
+//     style: 'decimal',
+//     minimumFractionDigits: 0,
+//     maximumFractionDigits: 0,
+//   }).format(amount) + ' FCFA';
+// }
 
 export function formatDate(date: string) {
   return format(new Date(date), 'dd MMMM yyyy', { locale: fr });
