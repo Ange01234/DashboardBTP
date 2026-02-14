@@ -3,12 +3,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { authService } from '@/services/auth.service';
+import { AuthResponse } from '@/types';
 
 interface AuthContextType {
     isAuthenticated: boolean;
     isDemoMode: boolean;
     user: { name: string; email: string; id: string } | null;
     login: (email: string, password: string) => Promise<void>;
+    register: (name: string, email: string, password: string, company: string) => Promise<void>;
     logout: () => void;
     enterDemoMode: () => void;
 }
@@ -40,20 +42,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, [pathname, router]);
 
+    const handleAuthResponse = (response: AuthResponse) => {
+        localStorage.setItem('btp_token', response.access_token);
+        localStorage.setItem('btp_auth', 'true');
+        localStorage.setItem('btp_user', JSON.stringify(response.user));
+        localStorage.removeItem('btp_demo');
+        setIsAuthenticated(true);
+        setUser(response.user);
+        setIsDemoMode(false);
+        router.push('/');
+    };
+
     const login = async (email: string, password: string) => {
         try {
             const response = await authService.login({ email, password });
-            console.log(response);
-            localStorage.setItem('btp_token', response.access_token);
-            localStorage.setItem('btp_auth', 'true');
-            localStorage.setItem('btp_user', JSON.stringify(response.user));
-            localStorage.removeItem('btp_demo');
-            setIsAuthenticated(true);
-            setUser(response.user);
-            setIsDemoMode(false);
-            router.push('/');
+            handleAuthResponse(response);
         } catch (error) {
             console.error('Login failed:', error);
+            throw error;
+        }
+    };
+
+    const register = async (name: string, email: string, password: string, company: string) => {
+        try {
+            const response = await authService.register({ name, email, password, company });
+            handleAuthResponse(response);
+        } catch (error) {
+            console.error('Registration failed:', error);
             throw error;
         }
     };
@@ -80,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isDemoMode, user, login, logout, enterDemoMode }}>
+        <AuthContext.Provider value={{ isAuthenticated, isDemoMode, user, login, register, logout, enterDemoMode }}>
             {children}
         </AuthContext.Provider>
     );

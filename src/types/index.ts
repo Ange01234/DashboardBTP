@@ -63,6 +63,7 @@ export interface RegisterDto {
     email: string;
     password: string;
     name: string;
+    company: string;
 }
 
 export interface LoginDto {

@@ -165,6 +165,7 @@ export default function ChantierDetailPage() {
                         "text-xl font-black",
                         netProfit >= 0 ? "text-slate-900" : "text-rose-600"
                     )}>
+                        {netProfit >= 0 ? "+" : "-"}
                         {formatCurrency(netProfit)}
                     </p>
                 </div>
