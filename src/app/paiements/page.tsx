@@ -6,7 +6,9 @@ import {
     Search,
     CreditCard,
     ArrowRight,
-    History
+    History,
+    Eye,
+    Pencil
 } from 'lucide-react';
 import { useData } from '@/hooks/useData';
 import { formatCurrency, formatDate } from '@/lib/utils';
@@ -87,6 +89,7 @@ export default function PaiementsPage() {
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Chantier</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Méthode</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Montant</th>
+                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -113,6 +116,14 @@ export default function PaiementsPage() {
                                     </td>
                                     <td className="px-6 py-4 font-bold text-emerald-600">
                                         +{formatCurrency(payment.amount)}
+                                    </td>
+                                    <td className="px-6 py-4 text-right space-x-2 flex ">
+                                        <Link href={`/paiements/${payment.id}`} className="text-slate-400 hover:text-primary-600 font-medium text-sm transition-colors">
+                                            <Eye size={18} />
+                                        </Link>
+                                        <Link href={`/paiements/${payment.id}/modifier`} className="text-slate-400 hover:text-primary-700 font-medium text-sm transition-colors">
+                                            <Pencil size={18} />
+                                        </Link>
                                     </td>
 
                                 </tr>

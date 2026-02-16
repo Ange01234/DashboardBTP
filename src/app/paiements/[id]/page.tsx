@@ -21,7 +21,10 @@ export default function ViewPaymentPage() {
     const { id } = useParams();
     const { payments, chantiers, loading } = useData();
     const payment = payments.find(p => p.id === id);
-    const chantier = payment ? chantiers.find(c => c.id === payment.chantierId) : null;
+    const chantierId = payment && typeof payment.chantierId === 'object'
+        ? (payment.chantierId as any)._id || (payment.chantierId as any).id
+        : payment?.chantierId; // Handle both string and object
+    const chantier = payment ? chantiers.find(c => c.id === chantierId) : null;
 
     if (loading) {
         return <LoadingState />;
@@ -87,12 +90,11 @@ export default function ViewPaymentPage() {
                             <p className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-200 pb-2">Détails du Projet</p>
                             <div className="p-4 bg-white rounded-2xl border border-slate-100">
                                 <p className="font-bold text-slate-900">{chantier?.name || 'Projet inconnu'}</p>
-                                <p className="text-sm text-slate-500 mt-1">ID Chantier: {payment.chantierId}</p>
+                                <p className="text-sm text-slate-500 mt-1">ID Chantier: {chantierId}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div className="p-12 space-y-8 text-center">
                     <div className="space-y-2">
                         <p className="text-slate-400 font-bold uppercase tracking-widest text-sm">Montant Total Reçu</p>
