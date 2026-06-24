@@ -158,15 +158,15 @@ export default function ChantierDetailPage() {
 
                 <div className="glass p-4 rounded-2xl">
                     <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm font-bold text-slate-400 uppercase">Bénéfice Net</p>
+                        <p className="text-sm font-bold text-slate-400 uppercase">Solde</p>
                         <CheckCircle2 size={20} className="text-indigo-500" />
                     </div>
                     <p className={cn(
                         "text-xl font-black",
-                        netProfit >= 0 ? "text-slate-900" : "text-rose-600"
+                        netProfit >= 0 ? "text-slate-900" : "text-red-600"
                     )}>
                         {netProfit >= 0 ? "+" : "-"}
-                        {formatCurrency(netProfit)}
+                        {formatCurrency(Math.abs(netProfit))}
                     </p>
                 </div>
             </div>
