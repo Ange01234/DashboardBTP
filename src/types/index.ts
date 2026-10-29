@@ -39,6 +39,22 @@ export interface Expense {
   proofUrl?: string;
 }
 
+export interface Spectator {
+  userId: string;
+  email: string;
+  name?: string;
+  company?: string;
+  addedAt?: string;
+}
+
+export interface UserSummary {
+  id: string;
+  name?: string;
+  email: string;
+  company?: string;
+  role?: string;
+}
+
 export interface Chantier {
   id: string;
   name: string;
@@ -48,6 +64,16 @@ export interface Chantier {
   endDate?: string;
   budget: number;
   status: ChantierStatus;
+  userId?: string;
+  owner?: {
+    id?: string;
+    _id?: string;
+    name?: string;
+    email?: string;
+    company?: string;
+  };
+  spectators?: Spectator[];
+  spectatorIds?: string[];
 }
 
 export interface ProjectSynthesis {
@@ -77,5 +103,7 @@ export interface AuthResponse {
         id: string;
         email: string;
         name: string;
+        company?: string;
+        role?: string;
     };
 }

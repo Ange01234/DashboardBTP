@@ -8,17 +8,20 @@ import {
     User,
     MapPin,
     Calendar,
-    Wallet
+    Wallet,
+    Users
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useData } from '@/hooks/useData';
 import { ChantierStatus } from '@/types';
+import UserSelector from '@/components/chantiers/UserSelector';
 
 export default function NewChantierPage() {
     const router = useRouter();
     const { addChantier } = useData();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [selectedSpectatorIds, setSelectedSpectatorIds] = useState<string[]>([]);
     const [formData, setFormData] = useState({
         name: '',
         client: '',
@@ -40,7 +43,8 @@ export default function NewChantierPage() {
                 startDate: formData.startDate,
                 endDate: formData.endDate || undefined,
                 budget: parseFloat(formData.budget) || 0,
-                status: formData.status
+                status: formData.status,
+                spectatorIds: selectedSpectatorIds,
             });
             router.push('/chantiers');
         } catch (error) {
@@ -52,7 +56,7 @@ export default function NewChantierPage() {
     };
 
     return (
-        <div className=" space-y-8">
+        <div className="space-y-8">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -61,7 +65,7 @@ export default function NewChantierPage() {
                     </Link>
                     <div>
                         <h1 className="text-2xl font-bold text-slate-900">Nouveau Chantier</h1>
-                        <p className="text-sm text-slate-500 mt-0.5">Créez un nouveau projet BTP.</p>
+                        <p className="text-sm text-slate-500 mt-0.5">Créez un nouveau projet BTP et invitez des collaborateurs.</p>
                     </div>
                 </div>
                 <button
@@ -189,6 +193,16 @@ export default function NewChantierPage() {
                             </select>
                         </div>
                     </div>
+                </section>
+
+                {/* Collaboration & Spectateurs */}
+                <section className="glass p-8 rounded-2xl space-y-6">
+                    <UserSelector
+                        selectedUserIds={selectedSpectatorIds}
+                        onChange={setSelectedSpectatorIds}
+                        title="Spectateurs & Collaboration"
+                        description="Sélectionnez des personnes inscrites sur la plateforme. Elles pourront consulter ce projet en lecture seule (indicateurs, dépenses, encaissements, devis)."
+                    />
                 </section>
             </form>
         </div>

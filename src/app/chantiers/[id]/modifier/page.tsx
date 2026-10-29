@@ -8,19 +8,25 @@ import {
     User,
     MapPin,
     Calendar,
-    Wallet
+    Wallet,
+    ShieldAlert,
+    Eye
 } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useData } from '@/hooks/useData';
+import { useAuth } from '@/context/AuthContext';
 import { formatDateForInput } from '@/lib/utils';
 import LoadingState from '@/components/ui/LoadingState';
+import UserSelector from '@/components/chantiers/UserSelector';
 
 export default function EditChantierPage() {
     const router = useRouter();
     const { id } = useParams();
     const { chantiers, updateChantier, loading } = useData();
+    const { user: currentUser, isDemoMode } = useAuth();
     const [isSaving, setIsSaving] = useState(false);
+    const [selectedSpectatorIds, setSelectedSpectatorIds] = useState<string[]>([]);
     const [formData, setFormData] = useState({
         name: '',
         client: '',
@@ -31,8 +37,9 @@ export default function EditChantierPage() {
         status: 'En cours'
     });
 
+    const chantier = chantiers.find(c => c.id === id);
+
     useEffect(() => {
-        const chantier = chantiers.find(c => c.id === id);
         if (chantier) {
             setFormData({
                 name: chantier.name,
@@ -43,8 +50,49 @@ export default function EditChantierPage() {
                 budget: chantier.budget.toString(),
                 status: chantier.status
             });
+            setSelectedSpectatorIds((chantier.spectators || []).map(s => s.userId));
         }
-    }, [chantiers, id]);
+    }, [chantier]);
+
+    if (loading && !formData.name) {
+        return <LoadingState />;
+    }
+
+    if (!chantier) {
+        return (
+            <div className="p-20 text-center text-slate-500">
+                <p>Chantier introuvable.</p>
+                <Link href="/chantiers" className="btn-primary mt-4 inline-block">Retour aux chantiers</Link>
+            </div>
+        );
+    }
+
+    // Role check
+    const isOwner = isDemoMode
+        ? (chantier.userId === 'demo-user' || !chantier.userId)
+        : (!chantier.userId || chantier.userId === currentUser?.id || (chantier.owner && chantier.owner.id === currentUser?.id));
+
+    if (!isOwner) {
+        return (
+            <div className="max-w-xl mx-auto py-16 text-center space-y-6">
+                <div className="w-16 h-16 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
+                    <ShieldAlert size={32} />
+                </div>
+                <div className="space-y-2">
+                    <h1 className="text-2xl font-bold text-slate-900">Accès non autorisé</h1>
+                    <p className="text-sm text-slate-500">
+                        Vous disposez d'un rôle de <strong>Spectateur (Lecture seule)</strong> sur ce chantier. Seul le propriétaire peut modifier les informations du projet.
+                    </p>
+                </div>
+                <div>
+                    <Link href={`/chantiers/${id}`} className="btn-primary inline-flex items-center space-x-2">
+                        <ChevronLeft size={16} />
+                        <span>Retour au chantier</span>
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,19 +101,17 @@ export default function EditChantierPage() {
             await updateChantier(id as string, {
                 ...formData,
                 budget: parseFloat(formData.budget) || 0,
-                status: formData.status as any
+                status: formData.status as any,
+                spectatorIds: selectedSpectatorIds,
             });
             router.push(`/chantiers/${id}`);
         } catch (err) {
-            console.error(err);
+            console.error('Failed to update chantier:', err);
+            alert('Erreur lors de la mise à jour du chantier');
         } finally {
             setIsSaving(false);
         }
     };
-
-    if (loading && !formData.name) {
-        return <LoadingState />;
-    }
 
     return (
         <div className="space-y-8">
@@ -77,7 +123,7 @@ export default function EditChantierPage() {
                     </Link>
                     <div>
                         <h1 className="text-2xl font-bold text-slate-900">Modifier le Chantier</h1>
-                        <p className="text-sm text-slate-500 mt-0.5">Mettez à jour les informations du projet.</p>
+                        <p className="text-sm text-slate-500 mt-0.5">Mettez à jour les informations du projet et la liste des spectateurs.</p>
                     </div>
                 </div>
                 <button
@@ -205,6 +251,16 @@ export default function EditChantierPage() {
                             </select>
                         </div>
                     </div>
+                </section>
+
+                {/* Collaboration & Spectateurs */}
+                <section className="glass p-8 rounded-2xl space-y-6">
+                    <UserSelector
+                        selectedUserIds={selectedSpectatorIds}
+                        onChange={setSelectedSpectatorIds}
+                        title="Gestion des Spectateurs"
+                        description="Modifiez les utilisateurs ayant un accès en lecture seule à ce projet."
+                    />
                 </section>
             </form>
         </div>

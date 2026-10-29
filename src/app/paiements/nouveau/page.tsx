@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
     ChevronLeft,
     Save,
@@ -12,11 +12,13 @@ import {
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useData } from '@/hooks/useData';
+import { useAuth } from '@/context/AuthContext';
 import { PaymentMethod } from '@/types';
 
 export default function NewPaymentPage() {
     const router = useRouter();
     const { chantiers, addPayment } = useData();
+    const { user: currentUser, isDemoMode } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         chantierId: '',
@@ -24,6 +26,18 @@ export default function NewPaymentPage() {
         date: new Date().toISOString().split('T')[0],
         method: 'Virement' as PaymentMethod
     });
+
+    const ownedChantiers = useMemo(() => {
+        return chantiers.filter(c => {
+            if (isDemoMode) return c.userId === 'demo-user' || !c.userId;
+            if (!currentUser?.id) return true;
+            if (!c.userId) return true;
+            const ownerId = typeof c.userId === 'object' 
+                ? (c.userId as any)._id || (c.userId as any).id 
+                : c.userId;
+            return ownerId === currentUser.id;
+        });
+    }, [chantiers, currentUser?.id, isDemoMode]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -83,7 +97,7 @@ export default function NewPaymentPage() {
                                     onChange={(e) => setFormData({ ...formData, chantierId: e.target.value })}
                                 >
                                     <option value="">Sélectionner un chantier...</option>
-                                    {chantiers.map(c => (
+                                    {ownedChantiers.map(c => (
                                         <option key={c.id} value={c.id}>{c.name}</option>
                                     ))}
                                 </select>

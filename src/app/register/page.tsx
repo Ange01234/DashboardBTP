@@ -2,8 +2,22 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { HardHat, Mail, Lock, Eye, EyeOff, ArrowRight, User, Briefcase } from 'lucide-react';
+import { HardHat, Mail, Lock, Eye, EyeOff, ArrowRight, User, Briefcase, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+
+function formatRegisterError(message: string): string {
+    const lower = message.toLowerCase();
+    if (lower.includes('already exists') || lower.includes('déjà') || lower.includes('existe')) {
+        return "Un compte existe déjà avec cette adresse email.";
+    }
+    if (lower.includes('password') && (lower.includes('short') || lower.includes('court'))) {
+        return "Le mot de passe doit comporter au moins 6 caractères.";
+    }
+    if (lower.includes('failed to fetch') || lower.includes('network') || lower.includes('connexion')) {
+        return "Impossible de joindre le serveur. Vérifiez votre connexion internet.";
+    }
+    return message;
+}
 
 export default function RegisterPage() {
     const { register } = useAuth();
@@ -13,14 +27,18 @@ export default function RegisterPage() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null);
         setIsLoading(true);
         try {
-            await register(name, email, password, company); // adapte si besoin selon ton contexte
-        } catch (error) {
-            console.error(error);
+            await register(name, email, password, company);
+        } catch (err: any) {
+            console.error('Registration error:', err);
+            const msg = err?.message || "Une erreur est survenue lors de l'inscription.";
+            setError(formatRegisterError(msg));
         } finally {
             setIsLoading(false);
         }
@@ -53,6 +71,14 @@ export default function RegisterPage() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
+                        {error && (
+                            <div className="flex items-start space-x-3 p-3.5 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700 text-xs font-medium animate-fade-in shadow-sm">
+                                <AlertCircle size={18} className="shrink-0 text-rose-500 mt-0.5" />
+                                <div className="leading-relaxed flex-1">
+                                    {error}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Nom complet */}
                         <div className="space-y-2">
@@ -66,7 +92,10 @@ export default function RegisterPage() {
                                 <input
                                     type="text"
                                     value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    onChange={(e) => {
+                                        setName(e.target.value);
+                                        if (error) setError(null);
+                                    }}
                                     className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 outline-none transition-all"
                                     placeholder="Jean Dupont"
                                     required
@@ -86,7 +115,10 @@ export default function RegisterPage() {
                                 <input
                                     type="text"
                                     value={company}
-                                    onChange={(e) => setCompany(e.target.value)}
+                                    onChange={(e) => {
+                                        setCompany(e.target.value);
+                                        if (error) setError(null);
+                                    }}
                                     className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 outline-none transition-all"
                                     placeholder="Entreprise BTP SA"
                                     required
@@ -106,7 +138,10 @@ export default function RegisterPage() {
                                 <input
                                     type="email"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => {
+                                        setEmail(e.target.value);
+                                        if (error) setError(null);
+                                    }}
                                     className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 outline-none transition-all"
                                     placeholder="nom@entreprise.fr"
                                     required
@@ -126,7 +161,10 @@ export default function RegisterPage() {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        if (error) setError(null);
+                                    }}
                                     className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-11 text-slate-900 outline-none transition-all"
                                     placeholder="••••••••"
                                     required

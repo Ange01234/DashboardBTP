@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
     Plus,
     Trash2,
@@ -10,6 +10,7 @@ import {
     Calculator
 } from 'lucide-react';
 import { useData } from '@/hooks/useData';
+import { useAuth } from '@/context/AuthContext';
 import { formatCurrency, cn } from '@/lib/utils';
 import Link from 'next/link';
 import { LineItem } from '@/types';
@@ -18,7 +19,20 @@ import { useRouter } from 'next/navigation';
 export default function NewDevisPage() {
     const router = useRouter();
     const { chantiers, addDevis } = useData();
+    const { user: currentUser, isDemoMode } = useAuth();
     const [chantierId, setChantierId] = useState('');
+
+    const ownedChantiers = useMemo(() => {
+        return chantiers.filter(c => {
+            if (isDemoMode) return c.userId === 'demo-user' || !c.userId;
+            if (!currentUser?.id) return true;
+            if (!c.userId) return true;
+            const ownerId = typeof c.userId === 'object' 
+                ? (c.userId as any)._id || (c.userId as any).id 
+                : c.userId;
+            return ownerId === currentUser.id;
+        });
+    }, [chantiers, currentUser?.id, isDemoMode]);
     const [name, setName] = useState('');
     const [lineItems, setLineItems] = useState<Omit<LineItem, 'id'>[]>([{
         designation: '',
@@ -114,7 +128,7 @@ export default function NewDevisPage() {
                                 onChange={(e) => setChantierId(e.target.value)}
                             >
                                 <option value="">Sélectionner un chantier...</option>
-                                {chantiers.map(c => (
+                                {ownedChantiers.map(c => (
                                     <option key={c.id} value={c.id}>{c.name} ({c.client})</option>
                                 ))}
                             </select>

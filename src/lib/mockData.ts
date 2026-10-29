@@ -1,4 +1,11 @@
-import { Chantier, Devis, Payment, Expense } from '@/types';
+import { Chantier, Devis, Payment, Expense, UserSummary } from '@/types';
+
+export const MOCK_USERS: UserSummary[] = [
+  { id: 'user-2', name: 'Sophie Martin', email: 'sophie.martin@btp.com', company: 'Cabinet Archi Sud' },
+  { id: 'user-3', name: 'Marc Lefebvre', email: 'marc@btp.com', company: 'BTP Expertise' },
+  { id: 'user-4', name: 'Amadou Koné', email: 'amadou.kone@batisseurs.ci', company: 'Génie Civil Afrique' },
+  { id: 'user-5', name: 'Claire Dubois', email: 'claire.dubois@structure.fr', company: 'Bureau d\'études BTP' },
+];
 
 export const MOCK_CHANTIERS: Chantier[] = [
   {
@@ -9,6 +16,11 @@ export const MOCK_CHANTIERS: Chantier[] = [
     startDate: '2025-01-15',
     budget: 45000000,
     status: 'En cours',
+    userId: 'demo-user',
+    owner: { id: 'demo-user', name: 'Utilisateur Démo', email: 'demo@btpdash.com' },
+    spectators: [
+      { userId: 'user-2', email: 'sophie.martin@btp.com', name: 'Sophie Martin', company: 'Cabinet Archi Sud' },
+    ],
   },
   {
     id: '2',
@@ -19,6 +31,9 @@ export const MOCK_CHANTIERS: Chantier[] = [
     endDate: '2025-06-30',
     budget: 150000000,
     status: 'En cours',
+    userId: 'demo-user',
+    owner: { id: 'demo-user', name: 'Utilisateur Démo', email: 'demo@btpdash.com' },
+    spectators: [],
   },
   {
     id: '3',
@@ -28,6 +43,11 @@ export const MOCK_CHANTIERS: Chantier[] = [
     startDate: '2025-02-10',
     budget: 8500000,
     status: 'Suspendu',
+    userId: 'user-3',
+    owner: { id: 'user-3', name: 'Marc Lefebvre', email: 'marc@btp.com', company: 'BTP Expertise' },
+    spectators: [
+      { userId: 'demo-user', email: 'demo@btpdash.com', name: 'Utilisateur Démo' },
+    ],
   },
 ];
 

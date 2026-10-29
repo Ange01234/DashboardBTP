@@ -2,8 +2,22 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { HardHat, Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
+import { HardHat, Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+
+function formatLoginError(message: string): string {
+    const lower = message.toLowerCase();
+    if (lower.includes('invalid credentials') || lower.includes('identifiants')) {
+        return "Email ou mot de passe incorrect. Veuillez vérifier vos identifiants.";
+    }
+    if (lower.includes('not activated') || lower.includes('inactif') || lower.includes('activate')) {
+        return "Votre compte est en attente d'activation par un administrateur.";
+    }
+    if (lower.includes('failed to fetch') || lower.includes('network') || lower.includes('connexion')) {
+        return "Impossible de joindre le serveur. Vérifiez votre connexion internet.";
+    }
+    return message;
+}
 
 export default function LoginPage() {
     const { login, enterDemoMode } = useAuth();
@@ -11,14 +25,18 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null);
         setIsLoading(true);
         try {
             await login(email, password);
-        } catch (error) {
-            console.error(error);
+        } catch (err: any) {
+            console.error('Login error:', err);
+            const msg = err?.message || "Une erreur est survenue lors de la connexion.";
+            setError(formatLoginError(msg));
         } finally {
             setIsLoading(false);
         }
@@ -51,6 +69,15 @@ export default function LoginPage() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
+                        {error && (
+                            <div className="flex items-start space-x-3 p-3.5 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700 text-xs font-medium animate-fade-in shadow-sm">
+                                <AlertCircle size={18} className="shrink-0 text-rose-500 mt-0.5" />
+                                <div className="leading-relaxed flex-1">
+                                    {error}
+                                </div>
+                            </div>
+                        )}
+
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Email</label>
                             <div className="relative group">
@@ -60,10 +87,12 @@ export default function LoginPage() {
                                 <input
                                     type="email"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => {
+                                        setEmail(e.target.value);
+                                        if (error) setError(null);
+                                    }}
                                     className="w-full bg-slate-50 border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 placeholder:text-slate-400 outline-none transition-all"
                                     placeholder="nom@entreprise.fr"
-
                                     required
                                 />
                             </div>
@@ -78,10 +107,12 @@ export default function LoginPage() {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        if (error) setError(null);
+                                    }}
                                     className="w-full bg-slate-50 border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-11 text-slate-900 placeholder:text-slate-400 outline-none transition-all"
                                     placeholder="••••••••"
-
                                     required
                                 />
                                 <button

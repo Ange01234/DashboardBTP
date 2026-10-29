@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
-import { MOCK_CHANTIERS, MOCK_EXPENSES, MOCK_PAYMENTS, MOCK_DEVIS } from "@/lib/mockData";
+import { MOCK_CHANTIERS, MOCK_EXPENSES, MOCK_PAYMENTS, MOCK_DEVIS, MOCK_USERS } from "@/lib/mockData";
 import { useState, useEffect, useCallback } from "react";
 import { Chantier, Expense, Payment, Devis } from "@/types";
 import { chantierService } from "@/services/chantier.service";
@@ -55,21 +55,95 @@ export function useData() {
   }, [fetchData]);
 
   // Functions to add data
-  const addChantier = async (chantier: Omit<Chantier, 'id'>) => {
+  const addChantier = async (chantier: Omit<Chantier, 'id'> & { spectatorIds?: string[] }) => {
     if (isDemoMode) {
-        setChantiers(prev => [...prev, { ...chantier, id: Math.random().toString(36).substr(2, 9) }]);
-        return;
+        const selectedSpectators = (chantier.spectatorIds || []).map(id => {
+          const u = MOCK_USERS.find(user => user.id === id);
+          return {
+            userId: id,
+            email: u?.email || 'user@example.com',
+            name: u?.name,
+            company: u?.company,
+            addedAt: new Date().toISOString(),
+          };
+        });
+        const newC: Chantier = {
+          ...chantier,
+          id: Math.random().toString(36).substr(2, 9),
+          userId: 'demo-user',
+          owner: { id: 'demo-user', name: 'Utilisateur Démo', email: 'demo@btpdash.com' },
+          spectators: selectedSpectators,
+        };
+        setChantiers(prev => [...prev, newC]);
+        return newC;
     };
     try {
         const newChantier = await chantierService.create(chantier);
         setChantiers(prev => [...prev, newChantier]);
+        return newChantier;
     } catch (err) {
         console.error('Failed to add chantier:', err);
         throw err;
     }
   };
 
-  const updateChantier = async (id: string, data: Partial<Chantier>) => {
+  const addSpectator = async (chantierId: string, spectatorUserId: string, spectatorUser?: { name?: string; email: string; company?: string }) => {
+    if (isDemoMode) {
+      setChantiers(prev => prev.map(c => {
+        if (c.id === chantierId) {
+          const currentSpectators = c.spectators || [];
+          return {
+            ...c,
+            spectators: [
+              ...currentSpectators,
+              {
+                userId: spectatorUserId,
+                email: spectatorUser?.email || 'collaborateur@btp.com',
+                name: spectatorUser?.name || 'Nouveau Spectateur',
+                company: spectatorUser?.company,
+                addedAt: new Date().toISOString(),
+              }
+            ]
+          };
+        }
+        return c;
+      }));
+      return;
+    }
+    try {
+      const updated = await chantierService.addSpectator(chantierId, spectatorUserId);
+      setChantiers(prev => prev.map(c => c.id === chantierId ? updated : c));
+      return updated;
+    } catch (err) {
+      console.error('Failed to add spectator:', err);
+      throw err;
+    }
+  };
+
+  const removeSpectator = async (chantierId: string, spectatorUserId: string) => {
+    if (isDemoMode) {
+      setChantiers(prev => prev.map(c => {
+        if (c.id === chantierId) {
+          return {
+            ...c,
+            spectators: (c.spectators || []).filter(s => s.userId !== spectatorUserId)
+          };
+        }
+        return c;
+      }));
+      return;
+    }
+    try {
+      const updated = await chantierService.removeSpectator(chantierId, spectatorUserId);
+      setChantiers(prev => prev.map(c => c.id === chantierId ? updated : c));
+      return updated;
+    } catch (err) {
+      console.error('Failed to remove spectator:', err);
+      throw err;
+    }
+  };
+
+  const updateChantier = async (id: string, data: Partial<Chantier> & { spectatorIds?: string[] }) => {
     if (isDemoMode) {
         setChantiers(prev => prev.map(c => c.id === id ? { ...c, ...data } : c));
         return;
@@ -77,6 +151,7 @@ export function useData() {
     try {
         const updated = await chantierService.update(id, data);
         setChantiers(prev => prev.map(c => c.id === id ? updated : c));
+        return updated;
     } catch (err) {
         console.error('Failed to update chantier:', err);
         throw err;
@@ -234,6 +309,8 @@ export function useData() {
     addChantier,
     updateChantier,
     deleteChantier,
+    addSpectator,
+    removeSpectator,
     addExpense,
     updateExpense,
     deleteExpense,
