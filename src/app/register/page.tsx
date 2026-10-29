@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { HardHat, Mail, Lock, Eye, EyeOff, ArrowRight, User, Briefcase, AlertCircle } from 'lucide-react';
+import { HardHat, Mail, Lock, Eye, EyeOff, ArrowRight, User, Briefcase, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 function formatRegisterError(message: string): string {
@@ -28,6 +28,7 @@ export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,6 +36,7 @@ export default function RegisterPage() {
         setIsLoading(true);
         try {
             await register(name, email, password, company);
+            setIsSuccess(true);
         } catch (err: any) {
             console.error('Registration error:', err);
             const msg = err?.message || "Une erreur est survenue lors de l'inscription.";
@@ -65,142 +67,179 @@ export default function RegisterPage() {
 
                 {/* Register Card */}
                 <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl shadow-slate-200/50 border border-white">
-                    <div className="mb-8">
-                        <h2 className="text-2xl font-bold text-slate-900">Inscription</h2>
-                        <p className="text-slate-500 text-sm mt-1">Rejoignez BTPDash pour gérer vos chantiers.</p>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        {error && (
-                            <div className="flex items-start space-x-3 p-3.5 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700 text-xs font-medium animate-fade-in shadow-sm">
-                                <AlertCircle size={18} className="shrink-0 text-rose-500 mt-0.5" />
-                                <div className="leading-relaxed flex-1">
-                                    {error}
-                                </div>
+                    {isSuccess ? (
+                        <div className="text-center py-4 space-y-6 animate-fade-in">
+                            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto shadow-lg shadow-emerald-600/10">
+                                <CheckCircle2 size={36} />
                             </div>
-                        )}
 
-                        {/* Nom complet */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
-                                Nom complet
-                            </label>
-                            <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary-500 transition-colors">
-                                    <User size={18} />
-                                </div>
-                                <input
-                                    type="text"
-                                    value={name}
-                                    onChange={(e) => {
-                                        setName(e.target.value);
-                                        if (error) setError(null);
-                                    }}
-                                    className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 outline-none transition-all"
-                                    placeholder="Jean Dupont"
-                                    required
-                                />
+                            <div className="space-y-2">
+                                <h2 className="text-2xl font-bold text-slate-900">Inscription réussie !</h2>
+                                <p className="text-sm text-slate-600 max-w-sm mx-auto leading-relaxed">
+                                    Votre compte professionnel pour <strong className="text-slate-900 font-semibold">{email}</strong> a été créé avec succès.
+                                </p>
                             </div>
-                        </div>
 
-                        {/* Nom de l'entreprise */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
-                                Nom de l’entreprise
-                            </label>
-                            <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary-500 transition-colors">
-                                    <Briefcase size={18} />
+                            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs text-left space-y-1.5">
+                                <div className="flex items-center space-x-2 font-bold text-amber-800">
+                                    <Clock size={16} className="text-amber-600 shrink-0" />
+                                    <span>Validation du compte requise</span>
                                 </div>
-                                <input
-                                    type="text"
-                                    value={company}
-                                    onChange={(e) => {
-                                        setCompany(e.target.value);
-                                        if (error) setError(null);
-                                    }}
-                                    className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 outline-none transition-all"
-                                    placeholder="Entreprise BTP SA"
-                                    required
-                                />
+                                <p className="text-amber-800/90 leading-relaxed">
+                                    Pour des raisons de sécurité, votre compte doit être activé par un administrateur avant votre première connexion. Vous pourrez vous connecter dès validation.
+                                </p>
                             </div>
-                        </div>
 
-                        {/* Email */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
-                                Email
-                            </label>
-                            <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary-500 transition-colors">
-                                    <Mail size={18} />
-                                </div>
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => {
-                                        setEmail(e.target.value);
-                                        if (error) setError(null);
-                                    }}
-                                    className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 outline-none transition-all"
-                                    placeholder="nom@entreprise.fr"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        {/* Mot de passe */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
-                                Mot de passe
-                            </label>
-                            <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary-500 transition-colors">
-                                    <Lock size={18} />
-                                </div>
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    value={password}
-                                    onChange={(e) => {
-                                        setPassword(e.target.value);
-                                        if (error) setError(null);
-                                    }}
-                                    className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-11 text-slate-900 outline-none transition-all"
-                                    placeholder="••••••••"
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                            <div className="pt-2">
+                                <Link
+                                    href="/login"
+                                    className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary-200 transition-all flex items-center justify-center space-x-2 group active:scale-[0.98] inline-flex"
                                 >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
+                                    <span>Aller à la page de connexion</span>
+                                    <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
+                                </Link>
                             </div>
                         </div>
+                    ) : (
+                        <>
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-bold text-slate-900">Inscription</h2>
+                                <p className="text-slate-500 text-sm mt-1">Rejoignez BTPDash pour gérer vos chantiers.</p>
+                            </div>
 
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-primary-200 transition-all flex items-center justify-center space-x-2 group active:scale-[0.98]"
-                        >
-                            {isLoading ? (
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            ) : (
-                                <>
-                                    <span>S'inscrire</span>
-                                    <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
-                                </>
-                            )}
-                        </button>
-                    </form>
+                            <form onSubmit={handleSubmit} className="space-y-5">
+                                {error && (
+                                    <div className="flex items-start space-x-3 p-3.5 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700 text-xs font-medium animate-fade-in shadow-sm">
+                                        <AlertCircle size={18} className="shrink-0 text-rose-500 mt-0.5" />
+                                        <div className="leading-relaxed flex-1">
+                                            {error}
+                                        </div>
+                                    </div>
+                                )}
 
-                    <div className="mt-8 text-center text-sm text-slate-500">
-                        Vous avez déjà un compte ?{' '}
-                        <Link href="/login" className="text-primary-600 font-bold hover:text-primary-700">
-                            Se connecter
-                        </Link>
-                    </div>
+                                {/* Nom complet */}
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
+                                        Nom complet
+                                    </label>
+                                    <div className="relative group">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary-500 transition-colors">
+                                            <User size={18} />
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={name}
+                                            onChange={(e) => {
+                                                setName(e.target.value);
+                                                if (error) setError(null);
+                                            }}
+                                            className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 outline-none transition-all"
+                                            placeholder="Jean Dupont"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Nom de l'entreprise */}
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
+                                        Nom de l’entreprise
+                                    </label>
+                                    <div className="relative group">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary-500 transition-colors">
+                                            <Briefcase size={18} />
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={company}
+                                            onChange={(e) => {
+                                                setCompany(e.target.value);
+                                                if (error) setError(null);
+                                            }}
+                                            className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 outline-none transition-all"
+                                            placeholder="Entreprise BTP SA"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Email */}
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
+                                        Email
+                                    </label>
+                                    <div className="relative group">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary-500 transition-colors">
+                                            <Mail size={18} />
+                                        </div>
+                                        <input
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => {
+                                                setEmail(e.target.value);
+                                                if (error) setError(null);
+                                            }}
+                                            className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-4 text-slate-900 outline-none transition-all"
+                                            placeholder="nom@entreprise.fr"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Mot de passe */}
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
+                                        Mot de passe
+                                    </label>
+                                    <div className="relative group">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary-500 transition-colors">
+                                            <Lock size={18} />
+                                        </div>
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            value={password}
+                                            onChange={(e) => {
+                                                setPassword(e.target.value);
+                                                if (error) setError(null);
+                                            }}
+                                            className="w-full bg-slate-50 ring-1 ring-slate-200 focus:ring-2 focus:ring-primary-500 rounded-xl py-3 pl-11 pr-11 text-slate-900 outline-none transition-all"
+                                            placeholder="••••••••"
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-primary-200 transition-all flex items-center justify-center space-x-2 group active:scale-[0.98]"
+                                >
+                                    {isLoading ? (
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        <>
+                                            <span>S'inscrire</span>
+                                            <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+
+                            <div className="mt-8 text-center text-sm text-slate-500">
+                                Vous avez déjà un compte ?{' '}
+                                <Link href="/login" className="text-primary-600 font-bold hover:text-primary-700">
+                                    Se connecter
+                                </Link>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

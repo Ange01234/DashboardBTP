@@ -63,10 +63,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-    const register = async (name: string, email: string, password: string, company: string) => {
+    const register = async (name: string, email: string, password: string, company: string): Promise<void> => {
         try {
             const response = await authService.register({ name, email, password, company });
-            handleAuthResponse(response);
+            // Only auto-login if the backend returned an access_token
+            if (response && (response as any).access_token) {
+                handleAuthResponse(response);
+            }
         } catch (error) {
             console.error('Registration failed:', error);
             throw error;
